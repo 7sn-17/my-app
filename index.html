@@ -248,11 +248,11 @@
     background: #e3f2fd !important;
     color: #0d47a1 !important;
 }
-.teacher-tab[data-subject="science"]:hover:not(.active) {
+.teacher-tab[data-subject="islamic"]:hover:not(.active) {
     background: #fff3e0 !important;
     color: #bf360c !important;
 }
-.teacher-tab[data-subject="islamic"]:hover:not(.active) {
+.teacher-tab[data-subject="science"]:hover:not(.active) {
     background: #e8f5e9 !important;
     color: #1b5e20 !important;
 }
@@ -267,16 +267,16 @@
     text-align: center;
     padding: 2.5rem 1.8rem;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 .certificate-modal .modal-content::before {
     content: "🏆";
     position: absolute;
-    top: -20px;
-    left: -20px;
-    font-size: 10rem;
+    top: -5px;
+    left: -5px;
+    font-size: 9rem;
     opacity: 0.08;
-    transform: rotate(-25deg);
+    transform: rotate(-15deg);
     filter: drop-shadow(0 4px 10px rgba(0,0,0,0.05));
     pointer-events: none;
 }
@@ -317,7 +317,51 @@
     color: #555;
 }
 .cert-close-btn:hover { background: #f0f0f0; }
-    </style>
+
+
+/* ===== حل مشكلة التمرير في الخلفية ===== */
+body.no-scroll {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+.modal.active {
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow-y: auto !important;
+}
+/* ===== أنماط البادج حسب المادة ===== */
+.duration-badge {
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    direction: ltr;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.duration-badge.science {
+    background: #2196f3 !important;
+    color: white !important;
+}
+
+.duration-badge.islamic {
+    background: #8B5CF6 !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.duration-badge.islamic i {
+    color: #FCD34D !important;
+}
+  </style>
 </head>
 <body>
 <div id="toast-physics" class="toast-physics"></div>
@@ -358,11 +402,31 @@
 
     // ***** المادة الجديدة: الإسلامية *****
     let scheduleDataIslamic = [
-        { dayNumber: 1, weekday: "الأربعاء", morning: "", evening: "" },
-        { dayNumber: 2, weekday: "الخميس", morning: "", evening: "" },
-        { dayNumber: 3, weekday: "الجمعة", morning: "", evening: "" },
-        { dayNumber: 4, weekday: "السبت", morning: "", evening: "" },
-    ];
+    { 
+        dayNumber: 1, 
+        weekday: "الأربعاء", 
+        morning: "تلاوة (2)\nاستحفاظ (1)\nحديث (2)", 
+        evening: "حضارة (3)\nأم سليم (1)" 
+    },
+    { 
+        dayNumber: 2, 
+        weekday: "الخميس", 
+        morning: "تلاوة (2)\nاستحفاظ (1)\nحديث (2)", 
+        evening: "أسرة (3)\nنظام المال (1)" 
+    },
+    { 
+        dayNumber: 3, 
+        weekday: "الجمعة", 
+        morning: "تلاوة (2)\nاستحفاظ (1)\nحديث (2)", 
+        evening: "أسرة (3)\nهدي النبي (1)" 
+    },
+    { 
+        dayNumber: 4, 
+        weekday: "السبت", 
+        morning: "تلاوة (1)\nاستحفاظ (1)\nحديث (1)\nقيود الملكية (1)", 
+        evening: "العلاقات الدولية (3)\nجعفر (1)" 
+    },
+];
 
     function safeLocalStorageSet(key, value) { try { localStorage.setItem(key, value); return true; } catch(e) { return false; } }
     function safeLocalStorageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
@@ -381,8 +445,22 @@
     let celebrationTriggered = false; // لمنع تكرار الاحتفال
 
     function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
-    function extractDuration(text) { let match = text.match(/\{(\d+(?:\.\d+)?)\}/); return match ? parseFloat(match[1]) : null; }
-    function cleanTaskText(rawText) { return rawText.replace(/\s*\{[\d\.]+\}\s*$/, '').trim(); }
+    function extractDuration(text) {
+    // للعلوم: البحث عن الأرقام بين {}
+    let match = text.match(/\{(\d+(?:\.\d+)?)\}/);
+    if (match) return parseFloat(match[1]);
+    // للإسلامية: البحث عن الأرقام بين ()
+    match = text.match(/\((\d+)\)/);
+    if (match) return parseFloat(match[1]);
+    return null;
+}
+    function cleanTaskText(rawText) {
+    // إزالة الأرقام المحجوزة بين {} (للعلوم)
+    let cleaned = rawText.replace(/\s*\{[\d\.]+\}\s*$/, '').trim();
+    // إزالة الأرقام المحجوزة بين () (للإسلامية)
+    cleaned = cleaned.replace(/\s*\([\d]+\)\s*$/, '').trim();
+    return cleaned;
+}
     function splitSub(text) {
         if (!text) return [];
         const lines = text.split(/\n/);
@@ -402,8 +480,9 @@
 
     // ========== الساعات ==========
     function getTotalHoursOfPlan() {
-        return allSubTasks.reduce((sum, task) => sum + (task.duration || 0), 0);
-    }
+    // ترجع إجمالي الوحدات (ساعات أو دروس حسب المادة)
+    return allSubTasks.reduce((sum, task) => sum + (task.duration || 0), 0);
+}
     function getCompletedHoursForStudent(student) {
         const completedEntries = getStudentCompletedBySubject(student, currentSubject);
         let total = 0;
@@ -416,33 +495,62 @@
     // ================================
 
     function rebuildSubtaskIds() {
-        allSubTasks = [];
-        let idCounter = 0;
-        currentSchedule.forEach((day, dayIdx) => {
-            let morningTasks = splitSub(day.morning);
-            morningTasks.forEach(taskText => {
-                let duration = 0;
-                if (currentSubject === 'science' || currentSubject === 'islamic') {
-                    let match = taskText.match(/\{(\d+(?:\.\d+)?)\}/);
-                    duration = match ? parseFloat(match[1]) : 0;
-                } else if (currentSubject === 'physics') {
-                    duration = 1;
-                }
-                allSubTasks.push({ id: `task_${idCounter++}`, dayIndex: dayIdx, period: 'صباحية', text: taskText, duration: duration });
-            });
-            let eveningTasks = splitSub(day.evening);
-            eveningTasks.forEach(taskText => {
-                let duration = 0;
-                if (currentSubject === 'science' || currentSubject === 'islamic') {
-                    let match = taskText.match(/\{(\d+(?:\.\d+)?)\}/);
-                    duration = match ? parseFloat(match[1]) : 0;
-                } else if (currentSubject === 'physics') {
-                    duration = 1;
-                }
-                allSubTasks.push({ id: `task_${idCounter++}`, dayIndex: dayIdx, period: 'مسائية', text: taskText, duration: duration });
+    allSubTasks = [];
+    let idCounter = 0;
+    currentSchedule.forEach((day, dayIdx) => {
+        let morningTasks = splitSub(day.morning);
+        morningTasks.forEach(taskText => {
+            let duration = 0;
+            let unit = '';
+            if (currentSubject === 'science') {
+                let match = taskText.match(/\{(\d+(?:\.\d+)?)\}/);
+                duration = match ? parseFloat(match[1]) : 0;
+                unit = 'ساعة';
+            } else if (currentSubject === 'islamic') {
+                let match = taskText.match(/\((\d+)\)/);
+                duration = match ? parseFloat(match[1]) : 0;
+                unit = 'درس';
+            } else if (currentSubject === 'physics') {
+                duration = 1;
+                unit = '';
+            }
+            allSubTasks.push({ 
+                id: `task_${idCounter++}`, 
+                dayIndex: dayIdx, 
+                period: 'صباحية', 
+                text: taskText, 
+                duration: duration,
+                unit: unit
             });
         });
-    }
+        
+        let eveningTasks = splitSub(day.evening);
+        eveningTasks.forEach(taskText => {
+            let duration = 0;
+            let unit = '';
+            if (currentSubject === 'science') {
+                let match = taskText.match(/\{(\d+(?:\.\d+)?)\}/);
+                duration = match ? parseFloat(match[1]) : 0;
+                unit = 'ساعة';
+            } else if (currentSubject === 'islamic') {
+                let match = taskText.match(/\((\d+)\)/);
+                duration = match ? parseFloat(match[1]) : 0;
+                unit = 'درس';
+            } else if (currentSubject === 'physics') {
+                duration = 1;
+                unit = '';
+            }
+            allSubTasks.push({ 
+                id: `task_${idCounter++}`, 
+                dayIndex: dayIdx, 
+                period: 'مسائية', 
+                text: taskText, 
+                duration: duration,
+                unit: unit
+            });
+        });
+    });
+}
 
     async function loadScheduleFromFirebase(subject) {
         const docRef = db.collection('config').doc(`schedule_${subject}`);
@@ -544,104 +652,176 @@
         refreshSounds();
     }
     function renderStudentView() {
-        if (!currentStudent) return;
-        const completedArray = getStudentCompletedBySubject(currentStudent, currentSubject);
-        const completedMap = new Map(); completedArray.forEach(entry => { if (entry.taskId) completedMap.set(entry.taskId, entry.completedAt); });
-        const totalTasks = allSubTasks.length;
-        const completedCount = completedMap.size;
-        document.getElementById('globalDone').innerText = completedCount;
-        document.getElementById('globalTotal').innerText = totalTasks;
-        document.getElementById('globalProgressFill').style.width = `${totalTasks === 0 ? 0 : (completedCount / totalTasks) * 100}%`;
-        const todayContainer = document.getElementById('todayTasksList');
-        todayContainer.innerHTML = '';
-        let todayTasks = [];
-        if (currentSubject === 'physics') {
-            const todayStr = `${new Date().getDate()}/${new Date().getMonth()+1}`;
-            todayTasks = allSubTasks.filter(t => currentSchedule[t.dayIndex]?.date === todayStr);
-        } else {
-            // العلوم والإسلامية: أول يوم غير مكتمل
-            let firstIncompleteDay = null;
-            for (let idx=0; idx<currentSchedule.length; idx++) {
-                const dayTasks = allSubTasks.filter(t => t.dayIndex === idx);
-                const allCompleted = dayTasks.every(t => completedMap.has(t.id));
-                if (!allCompleted) { firstIncompleteDay = idx; break; }
-            }
-            if (firstIncompleteDay === null && currentSchedule.length>0) firstIncompleteDay = currentSchedule.length-1;
-            if (firstIncompleteDay !== null) todayTasks = allSubTasks.filter(t => t.dayIndex === firstIncompleteDay);
+    if (!currentStudent) return;
+    const completedArray = getStudentCompletedBySubject(currentStudent, currentSubject);
+    const completedMap = new Map(); 
+    completedArray.forEach(entry => { if (entry.taskId) completedMap.set(entry.taskId, entry.completedAt); });
+    const totalTasks = allSubTasks.length;
+    const completedCount = completedMap.size;
+    document.getElementById('globalDone').innerText = completedCount;
+    document.getElementById('globalTotal').innerText = totalTasks;
+    document.getElementById('globalProgressFill').style.width = `${totalTasks === 0 ? 0 : (completedCount / totalTasks) * 100}%`;
+    
+    const todayContainer = document.getElementById('todayTasksList');
+    todayContainer.innerHTML = '';
+    let todayTasks = [];
+    if (currentSubject === 'physics') {
+        const todayStr = `${new Date().getDate()}/${new Date().getMonth()+1}`;
+        todayTasks = allSubTasks.filter(t => currentSchedule[t.dayIndex]?.date === todayStr);
+    } else {
+        let firstIncompleteDay = null;
+        for (let idx=0; idx<currentSchedule.length; idx++) {
+            const dayTasks = allSubTasks.filter(t => t.dayIndex === idx);
+            const allCompleted = dayTasks.every(t => completedMap.has(t.id));
+            if (!allCompleted) { firstIncompleteDay = idx; break; }
         }
-        if (todayTasks.length===0) todayContainer.innerHTML='<div class="subtask-item">✅ جميع المهام أنجزت أو لا توجد مهام لهذا اليوم</div>';
-        else {
-            const morning = todayTasks.filter(t=>t.period==='صباحية');
-            const evening = todayTasks.filter(t=>t.period==='مسائية');
-            const wrapper = document.createElement('div'); wrapper.className='today-tasks-split';
-            if (morning.length) {
-                const mornDiv = document.createElement('div'); mornDiv.className='today-period-block';
-                mornDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div>`;
-                morning.forEach(task => {
-                    const div = document.createElement('div');
-                    div.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
-                    div.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
-                    mornDiv.appendChild(div);
-                });
-                wrapper.appendChild(mornDiv);
-            }
-            if (evening.length) {
-                const evenDiv = document.createElement('div'); evenDiv.className='today-period-block';
-                evenDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-moon"></i> الفترة المسائية</div>`;
-                evening.forEach(task => {
-                    const div = document.createElement('div');
-                    div.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
-                    div.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
-                    evenDiv.appendChild(div);
-                });
-                wrapper.appendChild(evenDiv);
-            }
-            todayContainer.appendChild(wrapper);
+        if (firstIncompleteDay === null && currentSchedule.length>0) firstIncompleteDay = currentSchedule.length-1;
+        if (firstIncompleteDay !== null) todayTasks = allSubTasks.filter(t => t.dayIndex === firstIncompleteDay);
+    }
+    
+    if (todayTasks.length===0) {
+        todayContainer.innerHTML='<div class="subtask-item">✅ جميع المهام أنجزت أو لا توجد مهام لهذا اليوم</div>';
+    } else {
+        const morning = todayTasks.filter(t=>t.period==='صباحية');
+        const evening = todayTasks.filter(t=>t.period==='مسائية');
+        const wrapper = document.createElement('div'); 
+        wrapper.className='today-tasks-split';
+        
+        // ===== الفترة الصباحية =====
+        if (morning.length) {
+            const mornDiv = document.createElement('div'); 
+            mornDiv.className='today-period-block';
+            mornDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div>`;
+            morning.forEach(task => {
+                const div = document.createElement('div');
+                div.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
+                let durationHtml = '';
+                if (task.duration > 0 && task.unit) {
+                    let badgeColor = currentSubject === 'islamic' ? '#8B5CF6' : '#2196f3';
+                    let iconClass = currentSubject === 'islamic' ? 'fa-book' : 'fa-clock';
+                    let unitText = task.unit;
+                    let plural = '';
+                    if (currentSubject === 'islamic') {
+                        plural = task.duration > 1 ? 'وس' : '';
+                    } else if (currentSubject === 'science') {
+                        plural = task.duration > 1 ? 'ات' : '';
+                    }
+                    durationHtml = `<div class="duration-badge" style="background: ${badgeColor};"><i class="fas ${iconClass}"></i> ${task.duration} ${unitText}${plural}</div>`;
+                }
+                div.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
+                mornDiv.appendChild(div);
+            });
+            wrapper.appendChild(mornDiv);
         }
-        const daysContainer = document.getElementById('allDaysContainer');
-        daysContainer.innerHTML = '';
-        currentSchedule.forEach((day, idx) => {
-            const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='صباحية');
-            const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='مسائية');
-            const completed = morningTasks.filter(t=>completedMap.has(t.id)).length + eveningTasks.filter(t=>completedMap.has(t.id)).length;
-            const total = morningTasks.length+eveningTasks.length;
-            const percent = total===0?0:(completed/total)*100;
-            let headerText = currentSubject==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
-            const dayCard = document.createElement('div'); dayCard.className='day-card';
-            dayCard.innerHTML = `<div class="day-header"><div class="day-date">${headerText}</div></div><div style="padding:0.5rem 1.8rem; font-weight:bold;">📊 التقدم: <span dir="ltr">${completed}/${total}</span> <div class="progress-bg" style="width:110px; height:8px; display:inline-block; margin-right:8px;"><div style="width:${percent}%; height:100%; background:#2e7d32; border-radius:40px;"></div></div></div><div style="padding:0.5rem 1.5rem 1.2rem 1.5rem;" id="dayContent-${idx}"></div>`;
-            daysContainer.appendChild(dayCard);
-            const periodDiv = dayCard.querySelector(`#dayContent-${idx}`);
-            if (morningTasks.length) {
-                const mornBlock = document.createElement('div');
-                mornBlock.innerHTML = `<div class="period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
-                periodDiv.appendChild(mornBlock);
-                const mornList = mornBlock.querySelector(`#mornList-${idx}`);
-                morningTasks.forEach(task => {
-                    const taskDiv = document.createElement('div');
-                    taskDiv.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
-                    taskDiv.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
-                    mornList.appendChild(taskDiv);
-                });
-            }
-            if (eveningTasks.length) {
-                const evenBlock = document.createElement('div');
-                evenBlock.innerHTML = `<div class="period-title"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
-                periodDiv.appendChild(evenBlock);
-                const evenList = evenBlock.querySelector(`#evenList-${idx}`);
-                eveningTasks.forEach(task => {
-                    const taskDiv = document.createElement('div');
-                    taskDiv.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
-                    taskDiv.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
-                    evenList.appendChild(taskDiv);
-                });
-            }
-        });
-        attachTaskCheckEvents();
-        refreshSounds();
+        
+        // ===== الفترة المسائية =====
+        if (evening.length) {
+            const evenDiv = document.createElement('div'); 
+            evenDiv.className='today-period-block';
+            evenDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-moon"></i> الفترة المسائية</div>`;
+            evening.forEach(task => {
+                const div = document.createElement('div');
+                div.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
+                let durationHtml = '';
+                if (task.duration > 0 && task.unit) {
+                    let badgeColor = currentSubject === 'islamic' ? '#8B5CF6' : '#2196f3';
+                    let iconClass = currentSubject === 'islamic' ? 'fa-book' : 'fa-clock';
+                    let unitText = task.unit;
+                    let plural = '';
+                    if (currentSubject === 'islamic') {
+                        plural = task.duration > 1 ? 'وس' : '';
+                    } else if (currentSubject === 'science') {
+                        plural = task.duration > 1 ? 'ات' : '';
+                    }
+                    durationHtml = `<div class="duration-badge" style="background: ${badgeColor};"><i class="fas ${iconClass}"></i> ${task.duration} ${unitText}${plural}</div>`;
+                }
+                div.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
+                evenDiv.appendChild(div);
+            });
+            wrapper.appendChild(evenDiv);
+        }
+        todayContainer.appendChild(wrapper);
+    }
+    
+    // ===== عرض جميع الأيام =====
+    const daysContainer = document.getElementById('allDaysContainer');
+    daysContainer.innerHTML = '';
+    currentSchedule.forEach((day, idx) => {
+        const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='صباحية');
+        const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='مسائية');
+        const completed = morningTasks.filter(t=>completedMap.has(t.id)).length + eveningTasks.filter(t=>completedMap.has(t.id)).length;
+        const total = morningTasks.length+eveningTasks.length;
+        const percent = total===0?0:(completed/total)*100;
+        let headerText = currentSubject==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
+        const dayCard = document.createElement('div'); 
+        dayCard.className='day-card';
+        dayCard.innerHTML = `<div class="day-header"><div class="day-date">${headerText}</div></div><div style="padding:0.5rem 1.8rem; font-weight:bold;">📊 التقدم: <span dir="ltr">${completed}/${total}</span> <div class="progress-bg" style="width:110px; height:8px; display:inline-block; margin-right:8px;"><div style="width:${percent}%; height:100%; background:#2e7d32; border-radius:40px;"></div></div></div><div style="padding:0.5rem 1.5rem 1.2rem 1.5rem;" id="dayContent-${idx}"></div>`;
+        daysContainer.appendChild(dayCard);
+        const periodDiv = dayCard.querySelector(`#dayContent-${idx}`);
+        
+        // الصباحية
+        if (morningTasks.length) {
+            const mornBlock = document.createElement('div');
+            mornBlock.innerHTML = `<div class="period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
+            periodDiv.appendChild(mornBlock);
+            const mornList = mornBlock.querySelector(`#mornList-${idx}`);
+            morningTasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
+                let durationHtml = '';
+                if (task.duration > 0 && task.unit) {
+                    let badgeColor = currentSubject === 'islamic' ? '#8B5CF6' : '#2196f3';
+                    let iconClass = currentSubject === 'islamic' ? 'fa-book' : 'fa-clock';
+                    let unitText = task.unit;
+                    let plural = '';
+                    if (currentSubject === 'islamic') {
+                        plural = task.duration > 1 ? 'وس' : '';
+                    } else if (currentSubject === 'science') {
+                        plural = task.duration > 1 ? 'ات' : '';
+                    }
+                    durationHtml = `<div class="duration-badge" style="background: ${badgeColor};"><i class="fas ${iconClass}"></i> ${task.duration} ${unitText}${plural}</div>`;
+                }
+                taskDiv.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
+                mornList.appendChild(taskDiv);
+            });
+        }
+        
+        // المسائية
+        if (eveningTasks.length) {
+            const evenBlock = document.createElement('div');
+            evenBlock.innerHTML = `<div class="period-title"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
+            periodDiv.appendChild(evenBlock);
+            const evenList = evenBlock.querySelector(`#evenList-${idx}`);
+            eveningTasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
+                let durationHtml = '';
+                if (task.duration > 0 && task.unit) {
+                    let badgeColor = currentSubject === 'islamic' ? '#8B5CF6' : '#2196f3';
+                    let iconClass = currentSubject === 'islamic' ? 'fa-book' : 'fa-clock';
+                    let unitText = task.unit;
+                    let plural = '';
+                    if (currentSubject === 'islamic') {
+                        plural = task.duration > 1 ? 'وس' : '';
+                    } else if (currentSubject === 'science') {
+                        plural = task.duration > 1 ? 'ات' : '';
+                    }
+                    durationHtml = `<div class="duration-badge" style="background: ${badgeColor};"><i class="fas ${iconClass}"></i> ${task.duration} ${unitText}${plural}</div>`;
+                }
+                taskDiv.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
+                evenList.appendChild(taskDiv);
+            });
+        }
+    });
+    
+    attachTaskCheckEvents();
+    refreshSounds();
+
+    if (totalTasks > 0 && completedCount === totalTasks && !celebrationTriggered) {
+        const subjectName = { physics: 'الفيزياء', science: 'العلوم', islamic: 'الاسلامية' }[currentSubject];
+        triggerCelebration(subjectName);
+    }
+}
 
         // ===== التحقق من الإكمال لتشغيل الاحتفال =====
         if (totalTasks > 0 && completedCount === totalTasks && !celebrationTriggered) {
@@ -1313,9 +1493,11 @@
     const taskCount = allSubTasks.length;
     const hourCount = getTotalHoursOfPlan();
 
-    const modal = document.createElement('div');
-    modal.className = 'modal active certificate-modal';
-    modal.style.zIndex = '4000';
+    // إزالة أي شهادة سابقة
+    const existingCert = document.querySelector('.certificate-modal');
+    if (existingCert) {
+        existingCert.remove();
+    }
 
     const subjectIcon = {
         physics: 'fa-atom',
@@ -1330,35 +1512,62 @@
     const icon = subjectIcon[currentSubject] || 'fa-graduation-cap';
     const subName = subjectNameMap[currentSubject] || subjectName;
 
-    // الرسالة المطلوبة مع الهاشتاج في سطر منفصل
-    const shareText = `🏆 اللهم لك الحمد.. أنهيت خطة ${subName} المكثفة كاملة دون تقصير. كانت رحلة شاقة، لكن النتيجة تستحق العناء.\nمن يريد أن يبدأ رحلته نحو التفوق، هذا هو الرابط:\nhttps://7sn-17.github.io/plan/\n\n#خطة_البكالوريا`;
+    const modal = document.createElement('div');
+    modal.className = 'modal active certificate-modal';
+    modal.id = 'certificateModal';
+    modal.style.zIndex = '5000';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.background = 'rgba(0,0,0,0.85)';
+    modal.style.backdropFilter = 'blur(12px)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = '1';
+
+    const shareText = `🏆 اللهم لك الحمد..
+أنهيت خطة ${subName} المكثفة كاملة دون تقصير
+> إجمالي الساعات: ${hourCount.toFixed(1)} ساعة
+> تاريخ الإنجاز: ${dateStr}
+كانت رحلة شاقة، لكن النتيجة تستحق العناء.
+#خطتك_2026 #نجاح_بإذن_الله
+شارك إنجازك مع أصدقاءك:
+> https://7sn-17.github.io/plan`;
 
     modal.innerHTML = `
-        <div class="modal-content" style="text-align:center;">
-            <div class="certificate-icon">🏅</div>
-            <div class="certificate-title">شهادة إنجاز</div>
-            <div class="certificate-sub"><i class="fas ${icon}"></i>  خطة ${subName}  <i class="fas ${icon}"></i></div>
-            <div class="certificate-name">${escapeHtml(name)}</div>
-            <div class="certificate-detail"><i class="fas fa-calendar-check"></i> تم الإكمال بتاريخ: ${dateStr}</div>
-            <div class="certificate-detail"><i class="fas fa-tasks"></i> عدد المهام: ${taskCount}</div>
-            <div class="certificate-detail"><i class="fas fa-clock"></i> إجمالي الساعات: ${hourCount.toFixed(1)} ساعة</div>
-            <div class="certificate-footer">🌟 طريق النجاح يبدأ بخطوة منظمة، وأنت خطوتها بثبات 🌟</div>
-            <button id="shareWaBtn" class="share-wa-btn">
+        <div class="modal-content" style="text-align:center; max-width:550px; background: linear-gradient(145deg, #fef9e7, #fdebd0); border: 6px solid #d4ac0d; border-radius: 2.5rem; box-shadow: 0 30px 60px rgba(0,0,0,0.4); padding: 2.5rem 1.8rem; position: relative; overflow: visible; animation: fadeInUp 0.4s ease;">
+            
+            
+            <!-- الميدالية في الأمام (كما كان في الأصل) -->
+            <div style="font-size: 4rem; color: #d4ac0d; margin-bottom: 0.2rem;">🏅</div>
+            
+            <div style="font-size: 2rem; font-weight: 900; color: #1f3b2c; margin: 0.2rem 0 0.5rem; font-family: 'Tajawal', 'Cairo', sans-serif; letter-spacing: 1px;">شهادة إنجاز</div>
+            <div style="font-size: 1.2rem; color: #5d4e37; margin-bottom: 1.2rem; border-bottom: 2px dashed #d4ac0d; padding-bottom: 0.5rem;"><i class="fas ${icon}"></i> خطة ${subName}</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #0b4827; background: linear-gradient(to right, #0b4827, #2c7840); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0.5rem 0;">${escapeHtml(name)}</div>
+            <div style="font-size: 1rem; color: #2c3e50; margin: 0.3rem 0;"><i class="fas fa-calendar-check" style="color: #d4ac0d; margin-left: 6px;"></i> تم الإكمال بتاريخ: ${dateStr}</div>
+            <div style="font-size: 1rem; color: #2c3e50; margin: 0.3rem 0;"><i class="fas fa-tasks" style="color: #d4ac0d; margin-left: 6px;"></i> عدد المهام: ${taskCount}</div>
+            <div style="font-size: 1rem; color: #2c3e50; margin: 0.3rem 0;"><i class="fas fa-clock" style="color: #d4ac0d; margin-left: 6px;"></i> إجمالي الساعات: ${hourCount.toFixed(1)} ساعة</div>
+            <div style="margin-top: 1.2rem; padding-top: 1rem; border-top: 2px solid #d4ac0d; font-size: 0.9rem; color: #5d4e37;">🌟 طريق النجاح يبدأ بخطوة منظمة، وأنت خطوتها بثبات 🌟</div>
+            <button id="shareWaBtnCert" class="share-wa-btn" style="background: #25D366; color: white; border: none; padding: 0.8rem 2rem; border-radius: 60px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 12px; margin-top: 0.8rem; box-shadow: 0 8px 18px rgba(37,211,102,0.3);">
                 <i class="fab fa-whatsapp"></i> مشاركة الإنجاز
             </button>
             <br>
-            <button class="cert-close-btn" onclick="this.closest('.modal').remove(); celebrationTriggered=false;">إغلاق</button>
+            <button id="closeCertBtn" style="position: absolute; top: 15px; right: 15px; background: rgba(212, 172, 13, 0.15); border: 1px solid rgba(212, 172, 13, 0.25); padding: 0.3rem 0.8rem; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #b8941a; font-size: 0.7rem; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(4px);">
+    <i class="fas fa-times-circle" style="font-size: 0.8rem;"></i> إغلاق
+</button>
         </div>
     `;
+
     document.body.appendChild(modal);
 
-    // مستمع زر مشاركة الواتساب (يعمل على جميع الأجهزة)
-    const shareBtn = modal.querySelector('#shareWaBtn');
-    shareBtn.addEventListener('click', function(e) {
+    // زر مشاركة واتساب
+    document.getElementById('shareWaBtnCert').addEventListener('click', function(e) {
         e.stopPropagation();
         const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-        
-        // محاولة فتح التطبيق مباشرة على الهواتف
         if (/android|iphone|ipad|ipod/i.test(navigator.userAgent)) {
             window.location.href = waUrl;
         } else {
@@ -1366,13 +1575,34 @@
         }
     });
 
+    // زر الإغلاق
+    document.getElementById('closeCertBtn').addEventListener('click', function() {
+        closeCertificate();
+    });
+
     // إغلاق عند النقر خارج المحتوى
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
-            modal.remove();
-            celebrationTriggered = false;
+            closeCertificate();
         }
     });
+
+    // إغلاق عند الضغط على ESC
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape' && document.getElementById('certificateModal')) {
+            closeCertificate();
+            document.removeEventListener('keydown', escHandler);
+        }
+    });
+}
+
+// دالة مساعدة لإغلاق الشهادة بشكل نظيف
+function closeCertificate() {
+    const modal = document.getElementById('certificateModal');
+    if (modal) {
+        modal.remove();
+    }
+    celebrationTriggered = false;
 }
 
     // ========== جسيمات الخلفية ==========
@@ -1398,6 +1628,7 @@
 
     // ========== التهيئة ==========
     async function initApp() {
+document.body.style.overflow = 'auto';
         document.getElementById('appContainer').innerHTML = `
             <div style="text-align:center; padding:3rem; background:#fff; border-radius:2rem; margin:2rem; box-shadow:0 10px 25px rgba(0,0,0,0.05);">
                 <i class="fas fa-spinner fa-pulse" style="font-size:3rem; color:#2c6e3c;"></i>
