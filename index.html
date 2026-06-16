@@ -18,10 +18,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <!-- إضافة مكتبة Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
         /* جميع الأنماط كما هي – لم تتغير */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        body { font-family: 'Cairo', 'Tajawal', sans-serif; background: radial-gradient(circle at 20% 30%, #c8e6c9, #a5d6a7); padding: 1.5rem; min-height: 100vh; overflow-x: hidden; position: relative; }
+        body { font-family: 'Cairo', 'Tajawal', sans-serif; background: radial-gradient(circle at 20% 30%, #c8e6c9, #a5d6a7); padding: 1.5rem; min-height: 100vh; overflow-x: hidden; position: relative; transition: background 0.8s ease; }
+        body.celebrating { background: radial-gradient(circle at 30% 40%, #f9e79f, #f7dc6f) !important; }
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .app-container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 2; }
         .hero-area { background: linear-gradient(125deg, #0b4827, #1f7542); border-radius: 2.5rem; padding: 1.2rem 2rem; margin-bottom: 1.5rem; color: white; box-shadow: 0 20px 35px rgba(0,20,0,0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
@@ -184,6 +187,134 @@
             overflow-y: auto;
             padding-bottom: 10px;
         }
+ 
+#subjectTabsContainer .filter-btn.active {
+    background: linear-gradient(145deg, #2c6e3c, #1f5437);
+    color: white;
+    box-shadow: 0 8px 18px rgba(44,110,60,0.3);
+    transform: translateY(-2px);
+}
+#subjectTabsContainer .filter-btn:active {
+    transform: scale(0.96);
+}
+#allStudentsModal .filter-buttons .filter-btn,
+#taskStatsModal .filter-buttons .filter-btn {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+}
+/* أزرار التبويب في لوحة المعلم */
+.teacher-tab {
+    background: #f0f2f5 !important;
+    border: none !important;
+    padding: 10px 22px !important;
+    border-radius: 50px !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    color: #2c3e50 !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    cursor: pointer !important;
+    font-family: 'Cairo', 'Tajawal', sans-serif !important;
+    letter-spacing: 0.3px !important;
+}
+
+.teacher-tab i {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.teacher-tab:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.teacher-tab.active {
+    background: linear-gradient(145deg, #2c6e3c, #1f5437) !important;
+    color: white !important;
+    box-shadow: 0 8px 22px rgba(44,110,60,0.35) !important;
+    transform: translateY(-2px);
+}
+
+.teacher-tab.active i {
+    transform: scale(1.1);
+}
+
+/* تخصيص ألوان مميزة لكل مادة عند التمرير (اختياري) */
+.teacher-tab[data-subject="physics"]:hover:not(.active) {
+    background: #e3f2fd !important;
+    color: #0d47a1 !important;
+}
+.teacher-tab[data-subject="science"]:hover:not(.active) {
+    background: #fff3e0 !important;
+    color: #bf360c !important;
+}
+.teacher-tab[data-subject="islamic"]:hover:not(.active) {
+    background: #e8f5e9 !important;
+    color: #1b5e20 !important;
+}
+
+/* ===== أنماط شهادة الإنجاز الجديدة ===== */
+.certificate-modal .modal-content {
+    background: linear-gradient(145deg, #fef9e7, #fdebd0);
+    border: 6px solid #d4ac0d;
+    border-radius: 2.5rem;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    max-width: 550px;
+    text-align: center;
+    padding: 2.5rem 1.8rem;
+    position: relative;
+    overflow: visible;
+}
+.certificate-modal .modal-content::before {
+    content: "🏅";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4.5rem;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2));
+}
+.certificate-icon { font-size: 4rem; color: #d4ac0d; margin-bottom: 0.2rem; }
+.certificate-title { font-size: 2rem; font-weight: 900; color: #1f3b2c; margin: 0.2rem 0 0.5rem; font-family: 'Tajawal', 'Cairo', sans-serif; letter-spacing: 1px; }
+.certificate-sub { font-size: 1.2rem; color: #5d4e37; margin-bottom: 1.2rem; border-bottom: 2px dashed #d4ac0d; padding-bottom: 0.5rem; }
+.certificate-name { font-size: 2rem; font-weight: 800; color: #0b4827; background: linear-gradient(to right, #0b4827, #2c7840); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0.5rem 0; }
+.certificate-detail { font-size: 1rem; color: #2c3e50; margin: 0.3rem 0; }
+.certificate-detail i { color: #d4ac0d; margin-left: 6px; }
+.certificate-footer { margin-top: 1.2rem; padding-top: 1rem; border-top: 2px solid #d4ac0d; font-size: 0.9rem; color: #5d4e37; }
+.share-wa-btn {
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 60px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 0.8rem;
+    box-shadow: 0 8px 18px rgba(37,211,102,0.3);
+}
+.share-wa-btn:hover { transform: scale(1.05); background: #1ebd5e; }
+.share-wa-btn:active { transform: scale(0.96); }
+.cert-close-btn {
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1.5rem;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.8rem;
+    transition: 0.2s;
+    color: #555;
+}
+.cert-close-btn:hover { background: #f0f0f0; }
     </style>
 </head>
 <body>
@@ -225,11 +356,10 @@
 
     // ***** المادة الجديدة: الإسلامية *****
     let scheduleDataIslamic = [
-        { dayNumber: 1, weekday: "السبت", morning: "", evening: "" },
-        { dayNumber: 2, weekday: "الأحد", morning: "", evening: "" },
-        { dayNumber: 3, weekday: "الاثنين", morning: "", evening: "" },
-        { dayNumber: 4, weekday: "الثلاثاء", morning: "", evening: "" },
-        { dayNumber: 5, weekday: "الأربعاء", morning: "", evening: "" }
+        { dayNumber: 1, weekday: "الأربعاء", morning: "", evening: "" },
+        { dayNumber: 2, weekday: "الخميس", morning: "", evening: "" },
+        { dayNumber: 3, weekday: "الجمعة", morning: "", evening: "" },
+        { dayNumber: 4, weekday: "السبت", morning: "", evening: "" },
     ];
 
     function safeLocalStorageSet(key, value) { try { localStorage.setItem(key, value); return true; } catch(e) { return false; } }
@@ -246,6 +376,7 @@
     let adminAuthenticated = false;
     let currentSchedule = [];
     let currentSubject = 'physics'; // 'physics' | 'science' | 'islamic'
+    let celebrationTriggered = false; // لمنع تكرار الاحتفال
 
     function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
     function extractDuration(text) { let match = text.match(/\{(\d+(?:\.\d+)?)\}/); return match ? parseFloat(match[1]) : null; }
@@ -385,6 +516,7 @@
     // ============================================================
     // عرض الطالب
     async function initializeStudentWithSubject(subject) {
+        celebrationTriggered = false;
         currentSubject = subject;
         if (subject === 'physics') { await loadScheduleFromFirebase('physics'); currentSchedule = scheduleDataPhysics; }
         else if (subject === 'science') { await loadScheduleFromFirebase('science'); currentSchedule = scheduleDataScience; }
@@ -397,12 +529,12 @@
         const subjectNames = { physics: 'الفيزياء', science: 'العلوم', islamic: 'الاسلامية' };
         const icons = { physics: 'fa-flask', science: 'fa-dna', islamic: 'fa-mosque' };
         document.getElementById('appContainer').innerHTML = `
-            <div class="hero-area"><div class="logo-title"><h1><i class="fas fa-seedling"></i> 📘 خطة ${subjectNames[currentSubject]} <i class="fas ${icons[currentSubject]}"></i></h1></div>
+            <div class="hero-area"><div class="logo-title"><h1><i class="fas fa-seedling"></i>  خطة ${subjectNames[currentSubject]} <i class="fas ${icons[currentSubject]}"></i></h1></div>
             <button id="switchSubjectBtn" class="btn-icon"><i class="fas fa-exchange-alt"></i> تبديل المادة</button></div>
             <div class="stats-panel"><div><i class="fas fa-chart-line"></i> التقدم الكلي: <strong id="globalDone">0</strong> / <strong id="globalTotal">0</strong></div><div class="progress-bg"><div class="progress-fill-global" id="globalProgressFill"></div></div></div>
             <div class="today-highlight" id="todaySpotlight"><div style="font-weight:800; margin-bottom:8px;"><i class="fas fa-calendar-day"></i> 🟢 مهام اليوم المباشرة</div><div id="todayTasksList"></div></div>
             <div id="allDaysContainer"></div>
-            <div class="motivational-board">${currentSubject === 'physics' ? '<i class="fas fa-star-of-life"></i> السبت 6/6 : التقديم الممتاز للامتحان إن شاء الله <i class="fas fa-star-of-life"></i><br><span>✨ ثقة، مراجعة ذهنية، ودعوات ✨</span>' : (currentSubject === 'science' ? '<i class="fas fa-leaf"></i> خطة العلوم المكثفة مع المدد المحددة والاستراحات المنظمة <i class="fas fa-leaf"></i><br><span>✨ التزم بالبرنامج وستصل إلى القمة بإذن الله ✨</span>' : '<i class="fas fa-quran"></i> خطة الاسلامية المباركة مع تحديد المدد الزمنية <i class="fas fa-quran"></i><br><span>✨ اجعل النية خالصة ووفقك الله ✨</span>')}</div>
+            <div class="motivational-board">${currentSubject === 'physics' ? '<i class="fas fa-star-of-life"></i> السبت 6/6 : التقديم الممتاز للامتحان إن شاء الله <i class="fas fa-star-of-life"></i><br><span>✨ ثقة، مراجعة ذهنية، ودعوات ✨</span>' : (currentSubject === 'science' ? '<i class="fas fa-leaf"></i> خطة العلوم المكثفة مع المدد المحددة والاستراحات المنظمة <i class="fas fa-leaf"></i><br><span>✨ التزم بالبرنامج وستصل إلى القمة بإذن الله ✨</span>' : '<i class="fas fa-quran"></i> 📖 خطة مراجعة الاسلامية <i class="fas fa-quran"></i><br><span>✨ بالتوفيق والنجاح بإذن الله ✨</span>')}</div>
             <div class="footer-quote">أنت أقوى مما تتصور، وأكثر مما تتخيل 🍂</div>
             <div class="developer-credit" onclick="window.open('https://wa.me/17862927607', '_blank');"><i class="fab fa-whatsapp"></i> المطور: حسن المحمد</div>
         `;
@@ -508,6 +640,12 @@
         });
         attachTaskCheckEvents();
         refreshSounds();
+
+        // ===== التحقق من الإكمال لتشغيل الاحتفال =====
+        if (totalTasks > 0 && completedCount === totalTasks && !celebrationTriggered) {
+            const subjectName = { physics: 'الفيزياء', science: 'العلوم', islamic: 'الاسلامية' }[currentSubject];
+            triggerCelebration(subjectName);
+        }
     }
     function attachTaskCheckEvents() {
         document.querySelectorAll('.subtask-check').forEach(cb => {
@@ -525,12 +663,14 @@
         await saveStudentProgress(currentStudent.id, completed, currentSubject);
         const field = currentSubject==='physics' ? 'completedTasksPhysics' : (currentSubject==='science' ? 'completedTasksScience' : 'completedTasksIslamic');
         currentStudent[field] = completed;
+        celebrationTriggered = false;
         renderStudentView();
         playBeep();
     }
     async function switchSubject(subject) {
         if (subject===currentSubject) return;
         playSound('select');
+        celebrationTriggered = false;
         currentSubject = subject;
         if (subject==='physics') { await loadScheduleFromFirebase('physics'); currentSchedule = scheduleDataPhysics; }
         else if (subject==='science') { await loadScheduleFromFirebase('science'); currentSchedule = scheduleDataScience; }
@@ -542,165 +682,236 @@
         showToast(`تم التبديل إلى ${names[subject]}`);
     }
     function showSubjectSwitchDialog() {
-        const modal = document.createElement('div'); modal.className='modal active'; modal.style.zIndex='3000';
-        modal.innerHTML = `<div class="modal-content" style="max-width:450px; text-align:center;"><i class="fas fa-exchange-alt" style="font-size:3rem; color:#2c6e3c;"></i><h3>اختر المادة</h3><p>سيتم حفظ تقدمك تلقائياً.</p><div style="display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin:20px 0;">
-            <button id="switchToPhysics" class="btn" style="background:#1b5e2a;">⚛️ الفيزياء</button>
-            <button id="switchToScience" class="btn" style="background:#b85c1a;">🧬 العلوم</button>
-            <button id="switchToIslamic" class="btn" style="background:#2c6e3c;">🕌 الاسلامية</button>
-        </div><button id="cancelSwitchBtn" class="btn btn-danger">إلغاء</button></div>`;
-        document.body.appendChild(modal);
-        document.getElementById('switchToPhysics').onclick = () => { switchSubject('physics'); modal.remove(); };
-        document.getElementById('switchToScience').onclick = () => { switchSubject('science'); modal.remove(); };
-        document.getElementById('switchToIslamic').onclick = () => { switchSubject('islamic'); modal.remove(); };
-        document.getElementById('cancelSwitchBtn').onclick = () => modal.remove();
-    }
+    const modal = document.createElement('div'); 
+    modal.className = 'modal active'; 
+    modal.style.zIndex = '3000';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2rem 1.5rem; border-radius: 2rem;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 5px;">
+                <i class="fas fa-exchange-alt" style="font-size: 1.8rem; color: #2c6e3c;"></i>
+                <h3 style="margin: 0; color: #1f3b2c; font-weight: 800; font-family: 'Tajawal', 'Cairo', sans-serif;">تبديل المادة</h3>
+            </div>
+            <p style="color: #777; margin-bottom: 25px; font-size: 0.9rem; font-family: 'Tajawal', 'Cairo', sans-serif;">اختر المادة التي تريد متابعتها</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                <button id="switchToPhysics" style="background: #1b5e2a; color: white; border: none; padding: 14px 20px; border-radius: 50px; font-weight: 700; font-size: 1.1rem; font-family: 'Tajawal', 'Cairo', sans-serif; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; box-shadow: 0 4px 12px rgba(27,94,42,0.25); letter-spacing: 0.5px;">
+                    <i class="fas fa-atom" style="font-size: 1.2rem;"></i> الفيزياء
+                </button>
+                <button id="switchToScience" style="background: #b85c1a; color: white; border: none; padding: 14px 20px; border-radius: 50px; font-weight: 700; font-size: 1.1rem; font-family: 'Tajawal', 'Cairo', sans-serif; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; box-shadow: 0 4px 12px rgba(184,92,26,0.25); letter-spacing: 0.5px;">
+                    <i class="fas fa-dna" style="font-size: 1.2rem;"></i> العلوم
+                </button>
+                <button id="switchToIslamic" style="background: #1a3a6b; color: white; border: none; padding: 14px 20px; border-radius: 50px; font-weight: 700; font-size: 1.1rem; font-family: 'Tajawal', 'Cairo', sans-serif; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; box-shadow: 0 4px 12px rgba(26,58,107,0.25); letter-spacing: 0.5px;">
+                    <i class="fas fa-mosque" style="font-size: 1.2rem;"></i> الاسلامية
+                </button>
+            </div>
+
+            <button id="cancelSwitchBtn" style="background: transparent; color: #999; border: 1px solid #e0e0e0; padding: 10px; border-radius: 50px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; font-family: 'Tajawal', 'Cairo', sans-serif; font-size: 0.95rem;">
+                إلغاء
+            </button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // تأثيرات hover بأناقة
+    const btns = modal.querySelectorAll('button[id^="switchTo"]');
+    btns.forEach(btn => {
+        btn.addEventListener('mouseenter', () => { btn.style.transform = 'translateY(-2px) scale(1.02)'; });
+        btn.addEventListener('mouseleave', () => { btn.style.transform = 'translateY(0) scale(1)'; });
+    });
+    const cancelBtn = modal.querySelector('#cancelSwitchBtn');
+    cancelBtn.addEventListener('mouseenter', () => { cancelBtn.style.background = '#f5f5f5'; cancelBtn.style.borderColor = '#bbb'; });
+    cancelBtn.addEventListener('mouseleave', () => { cancelBtn.style.background = 'transparent'; cancelBtn.style.borderColor = '#e0e0e0'; });
+
+    // أحداث النقر
+    document.getElementById('switchToPhysics').onclick = () => { switchSubject('physics'); modal.remove(); };
+    document.getElementById('switchToScience').onclick = () => { switchSubject('science'); modal.remove(); };
+    document.getElementById('switchToIslamic').onclick = () => { switchSubject('islamic'); modal.remove(); };
+    document.getElementById('cancelSwitchBtn').onclick = () => modal.remove();
+}
 
     // ========== لوحة المشرف (المعلم) ==========
     async function renderTeacherView() {
-        let tabsContainer = document.getElementById('subjectTabsContainer');
-        if (!tabsContainer) {
-            tabsContainer = document.createElement('div');
-            tabsContainer.id = 'subjectTabsContainer';
-            tabsContainer.className = 'filter-buttons';
-            tabsContainer.style.marginBottom = '20px';
-            const todaySpotlight = document.getElementById('todaySpotlight');
-            todaySpotlight.insertAdjacentElement('beforebegin', tabsContainer);
-        }
-        const subjects = [
-            { id: 'physics', label: '⚛️ الفيزياء' },
-            { id: 'science', label: '🧬 العلوم' },
-            { id: 'islamic', label: '🕌 الاسلامية' }
-        ];
-        tabsContainer.innerHTML = subjects.map(s => `<button id="tab${s.id.charAt(0).toUpperCase()+s.id.slice(1)}Teacher" class="filter-btn ${currentSubject === s.id ? 'active' : ''}">${s.label}</button>`).join('');
-
-        await loadAllStudents();
-        // مهام اليوم
-        const todayContainer = document.getElementById('todayTasksList');
-        todayContainer.innerHTML = '';
-        let todayTasks = [];
-        if (currentSubject === 'physics') {
-            const todayStr = `${new Date().getDate()}/${new Date().getMonth()+1}`;
-            todayTasks = allSubTasks.filter(t => currentSchedule[t.dayIndex]?.date === todayStr);
-        } else {
-            // أول يوم غير مكتمل (للسياق: نأخذ أول يوم)
-            if (currentSchedule.length > 0) {
-                const firstDayTasks = allSubTasks.filter(t => t.dayIndex === 0);
-                todayTasks = firstDayTasks;
-            }
-        }
-        if (todayTasks.length===0) todayContainer.innerHTML='<div class="subtask-item">✅ لا توجد مهام لهذا اليوم</div>';
-        else {
-            const morning = todayTasks.filter(t=>t.period==='صباحية');
-            const evening = todayTasks.filter(t=>t.period==='مسائية');
-            const wrapper = document.createElement('div'); wrapper.className='today-tasks-split';
-            if (morning.length) {
-                const mornDiv = document.createElement('div'); mornDiv.className='today-period-block';
-                mornDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div>`;
-                for (const task of morning) {
-                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
-                    const totalStudents = allStudents.length;
-                    const fraction = `${completedCount}/${totalStudents}`;
-                    const div = document.createElement('div'); div.className='subtask-item';
-                    div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
-                    mornDiv.appendChild(div);
-                }
-                wrapper.appendChild(mornDiv);
-            }
-            if (evening.length) {
-                const evenDiv = document.createElement('div'); evenDiv.className='today-period-block';
-                evenDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-moon"></i> الفترة المسائية</div>`;
-                for (const task of evening) {
-                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
-                    const totalStudents = allStudents.length;
-                    const fraction = `${completedCount}/${totalStudents}`;
-                    const div = document.createElement('div'); div.className='subtask-item';
-                    div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
-                    evenDiv.appendChild(div);
-                }
-                wrapper.appendChild(evenDiv);
-            }
-            todayContainer.appendChild(wrapper);
-        }
-        // عرض الأيام
-        const daysContainer = document.getElementById('allDaysContainer');
-        daysContainer.innerHTML = '';
-        for (let idx=0; idx<currentSchedule.length; idx++) {
-            const day = currentSchedule[idx];
-            const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='صباحية');
-            const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='مسائية');
-            const isToday = (currentSubject==='physics' && day.date === `${new Date().getDate()}/${new Date().getMonth()+1}`);
-            const dayCard = document.createElement('div'); dayCard.className=`day-card ${isToday ? 'today-active' : ''}`;
-            let headerText = currentSubject==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
-            dayCard.innerHTML = `<div class="day-header"><div class="day-date">${headerText}</div></div><div style="padding:0.5rem 1.5rem 1.2rem 1.5rem;" id="dayContent-${idx}"></div>`;
-            daysContainer.appendChild(dayCard);
-            const periodDiv = dayCard.querySelector(`#dayContent-${idx}`);
-            if (morningTasks.length) {
-                const mornBlock = document.createElement('div');
-                mornBlock.innerHTML = `<div class="period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
-                periodDiv.appendChild(mornBlock);
-                const mornList = mornBlock.querySelector(`#mornList-${idx}`);
-                for (const task of morningTasks) {
-                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
-                    const totalStudents = allStudents.length;
-                    const fraction = `${completedCount}/${totalStudents}`;
-                    const taskDiv = document.createElement('div'); taskDiv.className='subtask-item';
-                    taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
-                    mornList.appendChild(taskDiv);
-                }
-            }
-            if (eveningTasks.length) {
-                const evenBlock = document.createElement('div');
-                evenBlock.innerHTML = `<div class="period-title"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
-                periodDiv.appendChild(evenBlock);
-                const evenList = evenBlock.querySelector(`#evenList-${idx}`);
-                for (const task of eveningTasks) {
-                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
-                    const totalStudents = allStudents.length;
-                    const fraction = `${completedCount}/${totalStudents}`;
-                    const taskDiv = document.createElement('div'); taskDiv.className='subtask-item';
-                    taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
-                    evenList.appendChild(taskDiv);
-                }
-            }
-        }
-        document.querySelectorAll('.detail-btn').forEach(btn => {
-            btn.addEventListener('click', () => { const taskId = btn.getAttribute('data-task-id'); showTaskDetails(taskId); });
-        });
-        // أحداث التبويب
-        document.getElementById('tabPhysicsTeacher').onclick = async () => {
-            currentSubject = 'physics';
-            await loadScheduleFromFirebase('physics');
-            currentSchedule = scheduleDataPhysics;
-            rebuildSubtaskIds();
-            await loadAllStudents();
-            document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - فيزياء 2026';
-            document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب بشكل لحظي ✨';
-            renderTeacherView();
-        };
-        document.getElementById('tabScienceTeacher').onclick = async () => {
-            currentSubject = 'science';
-            await loadScheduleFromFirebase('science');
-            currentSchedule = scheduleDataScience;
-            rebuildSubtaskIds();
-            await loadAllStudents();
-            document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - علوم 2026';
-            document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب في العلوم بشكل لحظي ✨';
-            renderTeacherView();
-        };
-        document.getElementById('tabIslamicTeacher').onclick = async () => {
-            currentSubject = 'islamic';
-            await loadScheduleFromFirebase('islamic');
-            currentSchedule = scheduleDataIslamic;
-            rebuildSubtaskIds();
-            await loadAllStudents();
-            document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - اسلامية 2026';
-            document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب في الاسلامية بشكل لحظي ✨';
-            renderTeacherView();
-        };
-        const statsPanel = document.querySelector('.stats-panel');
-        if (statsPanel) statsPanel.style.display = 'none';
-        refreshSounds();
+    // التأكد من وجود حاوية الأزرار
+    let tabsContainer = document.getElementById('subjectTabsContainer');
+    if (!tabsContainer) {
+        tabsContainer = document.createElement('div');
+        tabsContainer.id = 'subjectTabsContainer';
+        tabsContainer.className = 'filter-buttons';
+        tabsContainer.style.marginBottom = '20px';
+        const todaySpotlight = document.getElementById('todaySpotlight');
+        todaySpotlight.insertAdjacentElement('beforebegin', tabsContainer);
     }
+
+    // ===== الأزرار المحسّنة مع أيقونات =====
+    tabsContainer.innerHTML = `
+        <button id="tabPhysicsTeacher" class="filter-btn teacher-tab ${currentSubject === 'physics' ? 'active' : ''}" data-subject="physics">
+            <i class="fas fa-atom"></i> الفيزياء
+        </button>
+        <button id="tabScienceTeacher" class="filter-btn teacher-tab ${currentSubject === 'science' ? 'active' : ''}" data-subject="science">
+            <i class="fas fa-dna"></i> العلوم
+        </button>
+        <button id="tabIslamicTeacher" class="filter-btn teacher-tab ${currentSubject === 'islamic' ? 'active' : ''}" data-subject="islamic">
+            <i class="fas fa-mosque"></i> الاسلامية
+        </button>
+    `;
+
+    // تحميل جميع الطلاب
+    await loadAllStudents();
+
+    // عرض مهام اليوم
+    const todayContainer = document.getElementById('todayTasksList');
+    todayContainer.innerHTML = '';
+    let todayTasks = [];
+    if (currentSubject === 'physics') {
+        const todayStr = `${new Date().getDate()}/${new Date().getMonth()+1}`;
+        todayTasks = allSubTasks.filter(t => currentSchedule[t.dayIndex]?.date === todayStr);
+    } else {
+        // العلوم والإسلامية: أول يوم غير مكتمل (نأخذ اليوم الأول كافتراضي)
+        if (currentSchedule.length > 0) {
+            const firstDayTasks = allSubTasks.filter(t => t.dayIndex === 0);
+            todayTasks = firstDayTasks;
+        }
+    }
+
+    if (todayTasks.length === 0) {
+        todayContainer.innerHTML = '<div class="subtask-item">✅ لا توجد مهام لهذا اليوم</div>';
+    } else {
+        const morning = todayTasks.filter(t => t.period === 'صباحية');
+        const evening = todayTasks.filter(t => t.period === 'مسائية');
+        const wrapper = document.createElement('div');
+        wrapper.className = 'today-tasks-split';
+
+        if (morning.length) {
+            const mornDiv = document.createElement('div');
+            mornDiv.className = 'today-period-block';
+            mornDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div>`;
+            for (const task of morning) {
+                const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
+                const totalStudents = allStudents.length;
+                const fraction = `${completedCount}/${totalStudents}`;
+                const div = document.createElement('div');
+                div.className = 'subtask-item';
+                div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
+                mornDiv.appendChild(div);
+            }
+            wrapper.appendChild(mornDiv);
+        }
+
+        if (evening.length) {
+            const evenDiv = document.createElement('div');
+            evenDiv.className = 'today-period-block';
+            evenDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-moon"></i> الفترة المسائية</div>`;
+            for (const task of evening) {
+                const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
+                const totalStudents = allStudents.length;
+                const fraction = `${completedCount}/${totalStudents}`;
+                const div = document.createElement('div');
+                div.className = 'subtask-item';
+                div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
+                evenDiv.appendChild(div);
+            }
+            wrapper.appendChild(evenDiv);
+        }
+        todayContainer.appendChild(wrapper);
+    }
+
+    // عرض أيام الخطة
+    const daysContainer = document.getElementById('allDaysContainer');
+    daysContainer.innerHTML = '';
+    for (let idx = 0; idx < currentSchedule.length; idx++) {
+        const day = currentSchedule[idx];
+        const morningTasks = allSubTasks.filter(t => t.dayIndex === idx && t.period === 'صباحية');
+        const eveningTasks = allSubTasks.filter(t => t.dayIndex === idx && t.period === 'مسائية');
+        const isToday = (currentSubject === 'physics' && day.date === `${new Date().getDate()}/${new Date().getMonth()+1}`);
+        const dayCard = document.createElement('div');
+        dayCard.className = `day-card ${isToday ? 'today-active' : ''}`;
+        let headerText = currentSubject === 'physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
+        dayCard.innerHTML = `<div class="day-header"><div class="day-date">${headerText}</div></div><div style="padding:0.5rem 1.5rem 1.2rem 1.5rem;" id="dayContent-${idx}"></div>`;
+        daysContainer.appendChild(dayCard);
+        const periodDiv = dayCard.querySelector(`#dayContent-${idx}`);
+
+        if (morningTasks.length) {
+            const mornBlock = document.createElement('div');
+            mornBlock.innerHTML = `<div class="period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
+            periodDiv.appendChild(mornBlock);
+            const mornList = mornBlock.querySelector(`#mornList-${idx}`);
+            for (const task of morningTasks) {
+                const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
+                const totalStudents = allStudents.length;
+                const fraction = `${completedCount}/${totalStudents}`;
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'subtask-item';
+                taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
+                mornList.appendChild(taskDiv);
+            }
+        }
+
+        if (eveningTasks.length) {
+            const evenBlock = document.createElement('div');
+            evenBlock.innerHTML = `<div class="period-title"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
+            periodDiv.appendChild(evenBlock);
+            const evenList = evenBlock.querySelector(`#evenList-${idx}`);
+            for (const task of eveningTasks) {
+                const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
+                const totalStudents = allStudents.length;
+                const fraction = `${completedCount}/${totalStudents}`;
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'subtask-item';
+                taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
+                evenList.appendChild(taskDiv);
+            }
+        }
+    }
+
+    // إضافة مستمعي الأحداث لأزرار التفاصيل
+    document.querySelectorAll('.detail-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const taskId = btn.getAttribute('data-task-id');
+            showTaskDetails(taskId);
+        });
+    });
+
+    // ===== أحداث التبديل بين المواد (باستخدام الأزرار الجديدة) =====
+    document.getElementById('tabPhysicsTeacher').onclick = async () => {
+        currentSubject = 'physics';
+        await loadScheduleFromFirebase('physics');
+        currentSchedule = scheduleDataPhysics;
+        rebuildSubtaskIds();
+        await loadAllStudents();
+        document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - فيزياء 2026';
+        document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب بشكل لحظي ✨';
+        renderTeacherView();
+    };
+
+    document.getElementById('tabScienceTeacher').onclick = async () => {
+        currentSubject = 'science';
+        await loadScheduleFromFirebase('science');
+        currentSchedule = scheduleDataScience;
+        rebuildSubtaskIds();
+        await loadAllStudents();
+        document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - علوم 2026';
+        document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب في العلوم بشكل لحظي ✨';
+        renderTeacherView();
+    };
+
+    document.getElementById('tabIslamicTeacher').onclick = async () => {
+        currentSubject = 'islamic';
+        await loadScheduleFromFirebase('islamic');
+        currentSchedule = scheduleDataIslamic;
+        rebuildSubtaskIds();
+        await loadAllStudents();
+        document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - اسلامية 2026';
+        document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب في الاسلامية بشكل لحظي ✨';
+        renderTeacherView();
+    };
+
+    // إخفاء لوحة الإحصائيات (لأنها غير مطلوبة في وضع المعلم)
+    const statsPanel = document.querySelector('.stats-panel');
+    if (statsPanel) statsPanel.style.display = 'none';
+
+    // تفعيل الأصوات
+    refreshSounds();
+}
 
     // ========== تفاصيل المهمة ==========
     async function showTaskDetails(taskId) {
@@ -1017,6 +1228,142 @@
     function showCustomModal(message) { const modal=document.getElementById('customMessageModal'); document.getElementById('customMessageText').innerText=message; modal.classList.add('active'); setTimeout(()=>modal.classList.remove('active'),2000); }
     function showToast(message, isError=false) { const toast=document.getElementById('toast-physics'); if(!toast) return; toast.textContent=message; toast.classList.remove('show','error'); if(isError) toast.classList.add('error'); void toast.offsetWidth; toast.classList.add('show'); clearTimeout(toast._timeout); toast._timeout=setTimeout(()=>{ toast.classList.remove('show'); },2400); }
 
+    // ===== صورة التصفيق (Clap Sound) =====
+    function playClapSound() {
+        try {
+            if (!audioContext) initAudio();
+            if (!audioContext) return;
+            const duration = 1.8;
+            const bufferSize = audioContext.sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            // توليد ضوضاء بيضاء مع نبضات تشبه التصفيق
+            for (let i = 0; i < bufferSize; i++) {
+                const t = i / audioContext.sampleRate;
+                // محاكاة التصفيق: دفعات عشوائية متقطعة
+                const envelope = Math.sin(t * 30) * 0.5 + 0.5; // موجات سريعة
+                const burst = Math.random() > 0.6 ? 1 : 0.3; // كثافة عشوائية
+                data[i] = (Math.random() * 2 - 1) * envelope * burst * 0.15;
+            }
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            const gain = audioContext.createGain();
+            gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            source.connect(gain);
+            gain.connect(audioContext.destination);
+            source.start();
+            source.stop(audioContext.currentTime + duration);
+        } catch(e) { console.warn('Clap error:', e); }
+    }
+
+    // ===== دالة الاحتفال =====
+    function triggerCelebration(subjectName) {
+        if (celebrationTriggered) return;
+        celebrationTriggered = true;
+
+        // 1. تأثير Confetti
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 },
+                startVelocity: 25,
+                colors: ['#f1c40f', '#e67e22', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6']
+            });
+            setTimeout(() => {
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.4 },
+                    startVelocity: 20,
+                    colors: ['#f39c12', '#1abc9c', '#2980b9', '#d35400']
+                });
+            }, 400);
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 100,
+                    origin: { y: 0.7 },
+                    startVelocity: 30,
+                    colors: ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1']
+                });
+            }, 900);
+        }
+
+        // 2. تغيير خلفية الصفحة مؤقتاً
+        document.body.classList.add('celebrating');
+        setTimeout(() => document.body.classList.remove('celebrating'), 5000);
+
+        // 3. صوت التصفيق
+        playClapSound();
+
+        // 4. عرض شهادة الإنجاز بعد 0.8 ثانية (للتزامن مع الذروة)
+        setTimeout(() => {
+            showCelebrationCertificate(subjectName);
+        }, 800);
+    }
+
+    function showCelebrationCertificate(subjectName) {
+        const name = currentStudent ? currentStudent.fullName : 'الطالب';
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+        const taskCount = allSubTasks.length;
+        const hourCount = getTotalHoursOfPlan();
+
+        const modal = document.createElement('div');
+        modal.className = 'modal active certificate-modal';
+        modal.style.zIndex = '4000';
+
+        const subjectEmoji = {
+            physics: '⚛️',
+            science: '🧬',
+            islamic: '🕌'
+        };
+        const subjectNameMap = {
+            physics: 'الفيزياء',
+            science: 'العلوم',
+            islamic: 'الاسلامية'
+        };
+        const emoji = subjectEmoji[currentSubject] || '🏆';
+        const subName = subjectNameMap[currentSubject] || subjectName;
+
+        const shareText = `🏆 اللهم لك الحمد.. أنهيت خطة ${subName} المكثفة كاملة دون تقصير. كانت رحلة شاقة، لكن النتيجة تستحق العناء.\nمن يريد أن يبدأ رحلته نحو التفوق، هذا هو الرابط:\nhttps://7sn-17.github.io/plan/\n#خطة_البكالوريا`;
+
+        modal.innerHTML = `
+            <div class="modal-content" style="text-align:center;">
+                <div class="certificate-icon">🏅</div>
+                <div class="certificate-title">شهادة إنجاز</div>
+                <div class="certificate-sub">${emoji}  خطة ${subName}  ${emoji}</div>
+                <div class="certificate-name">${escapeHtml(name)}</div>
+                <div class="certificate-detail"><i class="fas fa-calendar-check"></i> تم الإكمال بتاريخ: ${dateStr}</div>
+                <div class="certificate-detail"><i class="fas fa-tasks"></i> عدد المهام: ${taskCount}</div>
+                <div class="certificate-detail"><i class="fas fa-clock"></i> إجمالي الساعات: ${hourCount.toFixed(1)} ساعة</div>
+                <div class="certificate-footer">🌟 طريق النجاح يبدأ بخطوة منظمة، وأنت خطوتها بثبات 🌟</div>
+                <button class="share-wa-btn" onclick="shareWhatsApp('${shareText.replace(/'/g, "\\'")}')">
+                    <i class="fab fa-whatsapp"></i> مشاركة الإنجاز
+                </button>
+                <br>
+                <button class="cert-close-btn" onclick="this.closest('.modal').remove(); celebrationTriggered=false;">إغلاق</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // إغلاق عند النقر خارج المحتوى
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+                celebrationTriggered = false;
+            }
+        });
+    }
+
+    // دالة المشاركة عبر واتساب
+    function shareWhatsApp(text) {
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    }
+
     // ========== جسيمات الخلفية ==========
     const canvas = document.getElementById('particles-canvas'); const ctx = canvas.getContext('2d'); let particles = [];
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -1137,8 +1484,8 @@
             <div class="hero-area" style="justify-content:center;"><div class="logo-title"><h1><i class="fas fa-graduation-cap"></i> اختر خطتك الدراسية</h1></div></div>
             <div style="display:flex; flex-wrap:wrap; gap:2rem; justify-content:center; margin:3rem 1rem;">
                 <div class="subject-card" data-subject="physics" style="background:linear-gradient(145deg, #1b5e2a, #0b3b1a); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-atom" style="font-size:4rem;"></i><h2>الفيزياء</h2><p>خطة مكثفة 10 أيام</p></div>
-                <div class="subject-card" data-subject="science" style="background:linear-gradient(145deg, #b85c1a, #7e3a0b); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-dna" style="font-size:4rem;"></i><h2>العلوم</h2><p>خطة مكثفة مع المدد الزمنية</p></div>
-                <div class="subject-card" data-subject="islamic" style="background:linear-gradient(145deg, #2c6e3c, #1a4028); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-mosque" style="font-size:4rem;"></i><h2>الاسلامية</h2><p>خطة 5 أيام (مهامك أنت)</p></div>
+                <div class="subject-card" data-subject="science" style="background:linear-gradient(145deg, #b85c1a, #7e3a0b); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-dna" style="font-size:4rem;"></i><h2>العلوم</h2><p>خطة مكثفة 3 أيام</p></div>
+                <div class="subject-card" data-subject="islamic" style="background:linear-gradient(145deg, #1a3a6b, #0d2547); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-mosque" style="font-size:4rem;"></i><h2>الاسلامية</h2><p>خطة مكثفة 4 أيام</p></div>
             </div>
         `;
         document.querySelectorAll('.subject-card').forEach(card=>{
