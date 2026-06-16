@@ -270,13 +270,15 @@
     overflow: visible;
 }
 .certificate-modal .modal-content::before {
-    content: "🏅";
+    content: "🏆";
     position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 4.5rem;
-    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2));
+    bottom: 10px;
+    right: 10px;
+    font-size: 8rem;
+    opacity: 0.1;
+    transform: rotate(-15deg);
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.05));
+    pointer-events: none;
 }
 .certificate-icon { font-size: 4rem; color: #d4ac0d; margin-bottom: 0.2rem; }
 .certificate-title { font-size: 2rem; font-weight: 900; color: #1f3b2c; margin: 0.2rem 0 0.5rem; font-family: 'Tajawal', 'Cairo', sans-serif; letter-spacing: 1px; }
@@ -1315,36 +1317,36 @@
         modal.className = 'modal active certificate-modal';
         modal.style.zIndex = '4000';
 
-        const subjectEmoji = {
-            physics: '⚛️',
-            science: '🧬',
-            islamic: '🕌'
-        };
-        const subjectNameMap = {
-            physics: 'الفيزياء',
-            science: 'العلوم',
-            islamic: 'الاسلامية'
-        };
-        const emoji = subjectEmoji[currentSubject] || '🏆';
-        const subName = subjectNameMap[currentSubject] || subjectName;
+        const subjectIcon = {
+    physics: 'fa-atom',
+    science: 'fa-dna',
+    islamic: 'fa-mosque'
+};
+const subjectNameMap = {
+    physics: 'الفيزياء',
+    science: 'العلوم',
+    islamic: 'التربية الإسلامية'
+};
+const icon = subjectIcon[currentSubject] || 'fa-graduation-cap';
+const subName = subjectNameMap[currentSubject] || subjectName;
 
         const shareText = `🏆 اللهم لك الحمد.. أنهيت خطة ${subName} المكثفة كاملة دون تقصير. كانت رحلة شاقة، لكن النتيجة تستحق العناء.\nمن يريد أن يبدأ رحلته نحو التفوق، هذا هو الرابط:\nhttps://7sn-17.github.io/plan/\n#خطة_البكالوريا`;
 
         modal.innerHTML = `
             <div class="modal-content" style="text-align:center;">
-                <div class="certificate-icon">🏅</div>
-                <div class="certificate-title">شهادة إنجاز</div>
-                <div class="certificate-sub">${emoji}  خطة ${subName}  ${emoji}</div>
-                <div class="certificate-name">${escapeHtml(name)}</div>
-                <div class="certificate-detail"><i class="fas fa-calendar-check"></i> تم الإكمال بتاريخ: ${dateStr}</div>
-                <div class="certificate-detail"><i class="fas fa-tasks"></i> عدد المهام: ${taskCount}</div>
-                <div class="certificate-detail"><i class="fas fa-clock"></i> إجمالي الساعات: ${hourCount.toFixed(1)} ساعة</div>
-                <div class="certificate-footer">🌟 طريق النجاح يبدأ بخطوة منظمة، وأنت خطوتها بثبات 🌟</div>
-                <button class="share-wa-btn" onclick="shareWhatsApp('${shareText.replace(/'/g, "\\'")}')">
-                    <i class="fab fa-whatsapp"></i> مشاركة الإنجاز
-                </button>
-                <br>
-                <button class="cert-close-btn" onclick="this.closest('.modal').remove(); celebrationTriggered=false;">إغلاق</button>
+                <div class="certificate-icon"><i class="fas ${icon}" style="font-size: 4rem; color: #d4ac0d;"></i></div>
+<div class="certificate-title">شهادة إنجاز</div>
+<div class="certificate-sub"><i class="fas ${icon}"></i>  خطة ${subName}  <i class="fas ${icon}"></i></div>
+<div class="certificate-name">${escapeHtml(name)}</div>
+<div class="certificate-detail"><i class="fas fa-calendar-check"></i> تم الإكمال بتاريخ: ${dateStr}</div>
+<div class="certificate-detail"><i class="fas fa-tasks"></i> عدد المهام: ${taskCount}</div>
+<div class="certificate-detail"><i class="fas fa-clock"></i> إجمالي الساعات: ${hourCount.toFixed(1)} ساعة</div>
+<div class="certificate-footer">🌟 طريق النجاح يبدأ بخطوة منظمة، وأنت خطوتها بثبات 🌟</div>
+<button class="share-wa-btn" onclick="shareWhatsApp('${shareText.replace(/'/g, "\\'")}')">
+    <i class="fab fa-whatsapp"></i> مشاركة الإنجاز
+</button>
+<br>
+<button class="cert-close-btn" onclick="this.closest('.modal').remove(); celebrationTriggered=false;">إغلاق</button>
             </div>
         `;
         document.body.appendChild(modal);
@@ -1360,9 +1362,20 @@
 
     // دالة المشاركة عبر واتساب
     function shareWhatsApp(text) {
-        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const encodedText = encodeURIComponent(text);
+    
+    if (isMobile) {
+        // محاولة فتح التطبيق مباشرة
+        window.location.href = `whatsapp://send?text=${encodedText}`;
+        // في حال لم يعمل، فتح الويب كحل بديل
+        setTimeout(() => {
+            window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+        }, 500);
+    } else {
+        window.open(`https://wa.me/?text=${encodedText}`, '_blank');
     }
+}
 
     // ========== جسيمات الخلفية ==========
     const canvas = document.getElementById('particles-canvas'); const ctx = canvas.getContext('2d'); let particles = [];
