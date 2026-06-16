@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>الخطة الدراسية 2026</title>
+    <title>خطتك الشاملة 🏆</title>
     <link rel="icon" type="image/png" href="logo.png">
-    <meta property="og:title" content="الخطة 2026">
-    <meta property="og:description" content="منصة متابعة الخطة الدراسية المصممة خصيصاً لطلاب الثانوية">
+    <meta property="og:title" content="خطتك 2026">
+    <meta property="og:description" content="خطتك اليومية لتحقيق التفوق في البكالوريا">
     <meta property="og:image" content="https://7sn-17.github.io/plan/logo.png?v=2">
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
@@ -19,13 +19,14 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <style>
+        /* جميع الأنماط كما هي – لم تتغير */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body { font-family: 'Cairo', 'Tajawal', sans-serif; background: radial-gradient(circle at 20% 30%, #c8e6c9, #a5d6a7); padding: 1.5rem; min-height: 100vh; overflow-x: hidden; position: relative; }
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .app-container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 2; }
-        .hero-area { background: linear-gradient(125deg, #0b4827, #1f7542); border-radius: 2.5rem; padding: 1.2rem 2rem; margin-bottom: 1.5rem; color: white; box-shadow: 0 20px 35px rgba(0,20,0,0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .hero-area { background: linear-gradient(125deg, #0b4827, #1f7542); border-radius: 2.5rem; padding: 1.2rem 2rem; margin-bottom: 1.5rem; color: white; box-shadow: 0 20px 35px rgba(0,20,0,0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .logo-title h1 { font-size: 1.7rem; display: flex; align-items: center; gap: 10px; }
-        .admin-buttons { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .admin-buttons { display: flex; gap: 12px; }
         .stats-panel { background: #fefdf0; border-radius: 2rem; padding: 1.2rem 1.8rem; margin-bottom: 1.5rem; border-right: 10px solid #2c7840; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .progress-bg { background: #d0e7cf; border-radius: 40px; height: 20px; flex: 2; overflow: hidden; }
         .progress-fill-global { background: linear-gradient(90deg, #2b6e3c, #6fbf4c); width: 0%; height: 100%; border-radius: 40px; transition: width 0.4s; }
@@ -94,6 +95,14 @@
             justify-content: center; 
             margin-bottom: 25px; 
             margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        #subjectTabsContainer {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .filter-btn { background: #e0e0e0; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .filter-btn.active { background: #2c6e3c; color: white; }
@@ -111,7 +120,7 @@
         .ltr-fraction { direction: ltr; display: inline-block; }
         .particle-burst { position: fixed; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle, #ffd700, #ff8c00); pointer-events: none; z-index: 10000; animation: particleFly 0.6s ease-out forwards; }
         @keyframes particleFly { 0% { transform: translate(0, 0) scale(1); opacity: 0.8; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
-        button, .gender-option, .btn-icon, .btn, .detail-btn, .add-subtask-btn, #confirmSaveSchedule, #editScheduleBtnTeacher, #studentsListBtn, .subtask-check { position: relative; overflow: hidden; transition: all 0.1s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
+        button, .gender-option, .btn-icon, .btn, .detail-btn, .add-subtask-btn, .subtask-check { position: relative; overflow: hidden; transition: all 0.1s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
         button:active, .gender-option:active, .btn-icon:active, .btn:active, .detail-btn:active, .add-subtask-btn:active { transform: scale(0.94) !important; }
         .subtask-check:active { animation: popSelect 0.2s cubic-bezier(0.34, 1.2, 0.64, 1); }
         @keyframes popSelect { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
@@ -133,23 +142,48 @@
         .today-period-block { background: #f9f6e8; border-radius: 1.2rem; padding: 0.8rem; border-right: 4px solid #2c7840; margin-bottom: 1rem; }
         .today-period-title { font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
         .info-note { background: #e8f0fe; border-radius: 1rem; padding: 0.6rem 1rem; margin-bottom: 1rem; text-align: center; color: #1a4d2a; font-weight: 500; }
-        #planCarouselStudent { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; max-width: 70%; scrollbar-width: thin; }
-        #planCarouselStudent::-webkit-scrollbar { height: 4px; }
-        #planCarouselStudent::-webkit-scrollbar-thumb { background: #a5d6a7; border-radius: 10px; }
-        .plan-carousel-btn { background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); padding: 6px 16px; border-radius: 40px; color: white; font-weight: 700; cursor: pointer; transition: 0.2s; white-space: nowrap; font-size: 0.9rem; }
-        .plan-carousel-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.02); }
-        .plan-carousel-btn.active { background: white; color: #0b4827; border-color: white; }
-        .plan-grid-teacher { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-        .plan-grid-btn { padding: 8px 24px; border-radius: 40px; border: 2px solid #ccc; background: #f8f8f8; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: 0.95rem; }
-        .plan-grid-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .plan-grid-btn.active { border-width: 3px; box-shadow: 0 0 0 2px rgba(0,0,0,0.05); }
-        .wizard-step { display: none; }
-        .wizard-step.active { display: block; }
-        .wizard-nav { display: flex; gap: 15px; justify-content: space-between; margin-top: 25px; }
-        .day-edit-row { background: #fafafa; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; border-right: 4px solid #2c6e3c; }
-        .day-edit-row input[type="text"] { width: 100%; padding: 8px; border-radius: 1rem; border: 1px solid #ccc; margin-bottom: 8px; font-family: inherit; }
-        .day-edit-row textarea { width: 100%; padding: 8px; border-radius: 1rem; border: 1px solid #ccc; font-family: inherit; resize: vertical; min-height: 60px; }
-        .day-edit-row .period-label { font-weight: 700; margin-top: 5px; display: block; }
+        #subjectTabsContainer .filter-btn {
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #subjectTabsContainer .filter-btn.active {
+            background: linear-gradient(145deg, #2c6e3c, #1f5437);
+            color: white;
+            box-shadow: 0 8px 18px rgba(44,110,60,0.3);
+            transform: translateY(-2px);
+        }
+        #subjectTabsContainer .filter-btn:active {
+            transform: scale(0.96);
+        }
+        .subject-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .subject-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .sticky-footer {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 12px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            border-top: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        .scrollable-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -170,14 +204,48 @@
     const db = firebase.firestore();
 
     let isTeacherMode = false;
-    let allPlans = {}; // { planId: { name, color, calculationMethod, days, ... } }
-    let currentPlanId = null;
-    let currentPlan = null;
-    let currentSchedule = [];
+    let scheduleDataPhysics = [
+        { date: "27/5", weekday: "الأربعاء", morning: "نواس مرن و فتل نظري عملي  / نموذجين", evening: "انتزاع تسريع الالكترونات / أشعة مهبطية / أشعة سينية / مراجعه من جلسه (الالكترونيات هديه)/كتابه قوانين الالكترونيات مع طرق حل المسائل" },
+        { date: "28/5", weekday: "الخميس", morning: "نواس ثقلي مركب / تركيز على جلسه حالات عزوم العطاله و احترف مسائل الثقلي وحل مسائل", evening: "الفعل الكهرضوئي نظري عملي" },
+        { date: "29/5", weekday: "الجمعة", morning: "نواس ثقلي بسيط / مقاومه هواء / حل نموذج نواس ثقلي و نموذج مقاومه هواء", evening: "الليزر / نظرية الكم / حل نموذج شامل الكترونيات" },
+        { date: "30/5", weekday: "السبت", morning: "ميكانيك سوائل ساكنه ضغط كللي / ارخميدس مع مسائل ارخميدس / أواني مستطرقة / رافعه سيارات مع مسألتها", evening: "نظري امواج مع ورقه التجارب" },
+        { date: "31/5", weekday: "الأحد", morning: "سوائل استمراريه / مسائل معادله برنولي / تركيز التعاليل في السوائل / حل نموذج مقاومه هواء وسوائل", evening: "عملي امواج / حل نموذج شامل امواج" },
+        { date: "1/6", weekday: "الاثنين", morning: "كهراطيسيه مع نموذج", evening: "تحريض / نموذج مشترك كهراطيسيه تحريض" },
+        { date: "2/6", weekday: "الثلاثاء", morning: "دارات مهتزه مع نظري المتناوب", evening: "عملي تيار متناوب تسلسل حل مسائل (5 درس~2005~22 عامه ~20 عامه) مع دورات تسلسل" },
+        { date: "3/6", weekday: "الأربعاء", morning: "تتمه متناوب تفرع مع تدريب مسائل تفرع 21 عامه ~23 عامه ~ مساله 4 درس", evening: "محوله كهربائيه وحل نموذج دارات متناوب محوله" },
+        { date: "4/6", weekday: "الخميس", morning: "حل وحضور نماذج الامتحانيه الشامله", evening: "حل نماذج شامله من دورات" },
+        { date: "5/6", weekday: "الجمعة", morning: "حل نماذج", evening: "حل نماذج" }
+    ];
+
+    let scheduleDataScience = [
+        { dayNumber: 1, weekday: "السبت", morning: "أول 3 دروس عصبية {3}\nاستراحة {1}\nرابع وخامس وسادس عصبي {2}\nاستراحة {0.5}\nالدرس السابع عصبي {1}", evening: "" },
+        { dayNumber: 2, weekday: "الأحد", morning: "الدرس الثامن والتاسع والعاشر {3}\nاستراحة {1}\nالدرس الأول مستقبلات إلى الأذن {2.5}\nاستراحة {1.5}\nدرس العين {1}\nاستراحة {0.5}\nتقانات حتى مغلفات البذور {3.5}\nاستراحة {1}\nإنسان ذكري وأنثوي {3}", evening: "" },
+        { dayNumber: 3, weekday: "الاثنين", morning: "تنامي {2}\nاستراحة {0.5}\nغدد {2.5}\nاستراحة {1}\nمناعة {2}\nاستراحة {1}\nوراثة {3}\nاستراحة {1}\nمراجعات (نماذج أو أوراق ذهبية في آخر النوطة + أوراق ألماسية) {4}", evening: "" }
+    ];
+
+    // ***** المادة الجديدة: الإسلامية *****
+    let scheduleDataIslamic = [
+        { dayNumber: 1, weekday: "السبت", morning: "", evening: "" },
+        { dayNumber: 2, weekday: "الأحد", morning: "", evening: "" },
+        { dayNumber: 3, weekday: "الاثنين", morning: "", evening: "" },
+        { dayNumber: 4, weekday: "الثلاثاء", morning: "", evening: "" },
+        { dayNumber: 5, weekday: "الأربعاء", morning: "", evening: "" }
+    ];
+
+    function safeLocalStorageSet(key, value) { try { localStorage.setItem(key, value); return true; } catch(e) { return false; } }
+    function safeLocalStorageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+    async function safeFirebaseGet(docRef, timeoutMs = 5000) {
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('انتهى الوقت')), timeoutMs));
+        const getPromise = docRef.get();
+        return await Promise.race([getPromise, timeoutPromise]);
+    }
+
     let allSubTasks = [];
     let currentStudent = null;
     let allStudents = [];
     let adminAuthenticated = false;
+    let currentSchedule = [];
+    let currentSubject = 'physics'; // 'physics' | 'science' | 'islamic'
 
     function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
     function extractDuration(text) { let match = text.match(/\{(\d+(?:\.\d+)?)\}/); return match ? parseFloat(match[1]) : null; }
@@ -199,11 +267,12 @@
         return tasks;
     }
 
+    // ========== الساعات ==========
     function getTotalHoursOfPlan() {
         return allSubTasks.reduce((sum, task) => sum + (task.duration || 0), 0);
     }
     function getCompletedHoursForStudent(student) {
-        const completedEntries = getStudentCompletedBySubject(student, currentPlanId);
+        const completedEntries = getStudentCompletedBySubject(student, currentSubject);
         let total = 0;
         completedEntries.forEach(entry => {
             const task = allSubTasks.find(t => t.id === entry.taskId);
@@ -211,262 +280,152 @@
         });
         return total;
     }
+    // ================================
 
     function rebuildSubtaskIds() {
         allSubTasks = [];
         let idCounter = 0;
-        if (!currentSchedule) return;
         currentSchedule.forEach((day, dayIdx) => {
             let morningTasks = splitSub(day.morning);
             morningTasks.forEach(taskText => {
                 let duration = 0;
-                if (currentPlan && currentPlan.calculationMethod === 'hours') {
-                    duration = extractDuration(taskText) || 0;
-                } else {
+                if (currentSubject === 'science' || currentSubject === 'islamic') {
+                    let match = taskText.match(/\{(\d+(?:\.\d+)?)\}/);
+                    duration = match ? parseFloat(match[1]) : 0;
+                } else if (currentSubject === 'physics') {
                     duration = 1;
                 }
-                allSubTasks.push({ id: `task_${idCounter++}`, dayIndex: dayIdx, period: 'الصباحية', text: taskText, duration: duration });
+                allSubTasks.push({ id: `task_${idCounter++}`, dayIndex: dayIdx, period: 'صباحية', text: taskText, duration: duration });
             });
             let eveningTasks = splitSub(day.evening);
             eveningTasks.forEach(taskText => {
                 let duration = 0;
-                if (currentPlan && currentPlan.calculationMethod === 'hours') {
-                    duration = extractDuration(taskText) || 0;
-                } else {
+                if (currentSubject === 'science' || currentSubject === 'islamic') {
+                    let match = taskText.match(/\{(\d+(?:\.\d+)?)\}/);
+                    duration = match ? parseFloat(match[1]) : 0;
+                } else if (currentSubject === 'physics') {
                     duration = 1;
                 }
-                allSubTasks.push({ id: `task_${idCounter++}`, dayIndex: dayIdx, period: 'المسائية', text: taskText, duration: duration });
+                allSubTasks.push({ id: `task_${idCounter++}`, dayIndex: dayIdx, period: 'مسائية', text: taskText, duration: duration });
             });
         });
     }
 
-    // ---------- Firebase Helpers ----------
-    async function safeFirebaseGet(docRef, timeoutMs = 5000) {
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('انتهت المهلة')), timeoutMs));
-        const getPromise = docRef.get();
-        return await Promise.race([getPromise, timeoutPromise]);
-    }
-
-    async function loadAllPlans() {
-        try {
-            const snapshot = await db.collection('plans').get();
-            allPlans = {};
-            snapshot.forEach(doc => {
-                allPlans[doc.id] = doc.data();
-            });
-            // إذا كانت المجموعة فارغة، نقوم بترحيل الخطط القديمة
-            if (Object.keys(allPlans).length === 0) {
-                await migrateOldPlans();
-            }
-        } catch (e) {
-            console.warn("Error loading plans, trying migration", e);
-            await migrateOldPlans();
-        }
-    }
-
-    async function migrateOldPlans() {
-        // فيزياء
-        try {
-            const physDoc = await db.collection('config').doc('schedule_physics').get();
-            if (physDoc.exists) {
-                const data = physDoc.data().days;
-                await db.collection('plans').doc('physics').set({
-                    name: 'الفيزياء',
-                    color: '#2c6e3c',
-                    calculationMethod: 'tasks',
-                    days: data,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }
-        } catch(e) { console.warn("Migrate physics error", e); }
-
-        // علوم
-        try {
-            const sciDoc = await db.collection('config').doc('schedule_science').get();
-            if (sciDoc.exists) {
-                const data = sciDoc.documents ? sciDoc.data().days : sciDoc.data().days;
-                await db.collection('plans').doc('science').set({
-                    name: 'العلوم',
-                    color: '#b85c1a',
-                    calculationMethod: 'hours',
-                    days: data,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }
-        } catch(e) { console.warn("Migrate science error", e); }
-
-        // إعادة تحميل الخطط
-        const snapshot = await db.collection('plans').get();
-        allPlans = {};
-        snapshot.forEach(doc => { allPlans[doc.id] = doc.data(); });
-    }
-
-    async function loadPlan(planId) {
-        if (!allPlans[planId]) {
-            showToast('الخطة غير موجودة', true);
-            return;
-        }
-        currentPlanId = planId;
-        currentPlan = allPlans[planId];
-        currentSchedule = currentPlan.days || [];
-        rebuildSubtaskIds();
-
-        if (isTeacherMode) {
-            await loadAllStudents();
-            renderTeacherView();
+    async function loadScheduleFromFirebase(subject) {
+        const docRef = db.collection('config').doc(`schedule_${subject}`);
+        let doc;
+        try { doc = await safeFirebaseGet(docRef); } catch(e) { throw new Error(`فشل تحميل جدول ${subject}`); }
+        if (doc.exists) {
+            if (subject === 'physics') scheduleDataPhysics = doc.data().days;
+            else if (subject === 'science') scheduleDataScience = doc.data().days;
+            else scheduleDataIslamic = doc.data().days;
         } else {
-            renderStudentView();
+            if (subject === 'physics') await docRef.set({ days: scheduleDataPhysics });
+            else if (subject === 'science') await docRef.set({ days: scheduleDataScience });
+            else await docRef.set({ days: scheduleDataIslamic });
         }
-        // تحديث الكاروسيل/الشبكة لتعكس الحالة النشطة
-        renderPlanSelectors();
     }
-
-    // ---------- Student Functions ----------
+    async function saveScheduleToFirebase(subject, data) { await db.collection('config').doc(`schedule_${subject}`).set({ days: data }); }
+    function formatTimeAndDate(timestampMs) {
+        if (!timestampMs) return '—';
+        const date = new Date(timestampMs);
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'م' : 'ص';
+        hours = hours % 12; if (hours === 0) hours = 12;
+        return `${hours}:${minutes} ${ampm} - ${date.getDate()}/${date.getMonth()+1}`;
+    }
+    async function removeTaskFromAllStudents(taskId, subject) {
+        const studentsSnap = await db.collection('students').get();
+        const batch = db.batch();
+        const field = subject === 'physics' ? 'completedTasksPhysics' : (subject === 'science' ? 'completedTasksScience' : 'completedTasksIslamic');
+        studentsSnap.docs.forEach(doc => {
+            const completed = doc.data()[field] || [];
+            const newCompleted = completed.filter(entry => entry.taskId !== taskId);
+            if (newCompleted.length !== completed.length) batch.update(doc.ref, { [field]: newCompleted });
+        });
+        await batch.commit();
+    }
     async function registerStudent(fullName, gender) {
         const newId = db.collection('students').doc().id;
-        const studentData = { fullName, gender, completedTasksPhysics: [], completedTasksScience: [], createdAt: firebase.firestore.FieldValue.serverTimestamp(), lastUpdated: firebase.firestore.FieldValue.serverTimestamp() };
+        const studentData = { fullName, gender, completedTasksPhysics: [], completedTasksScience: [], completedTasksIslamic: [], createdAt: firebase.firestore.FieldValue.serverTimestamp(), lastUpdated: firebase.firestore.FieldValue.serverTimestamp() };
         await db.collection('students').doc(newId).set(studentData);
         currentStudent = { id: newId, ...studentData };
         safeLocalStorageSet('studentId', newId);
         return currentStudent;
     }
-    function safeLocalStorageSet(key, value) { try { localStorage.setItem(key, value); return true; } catch(e) { return false; } }
-    function safeLocalStorageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
-
     async function loadStudentData(studentId) {
         const doc = await db.collection('students').doc(studentId).get();
         if (doc.exists) {
             currentStudent = { id: studentId, ...doc.data() };
             if (!currentStudent.completedTasksPhysics) currentStudent.completedTasksPhysics = [];
             if (!currentStudent.completedTasksScience) currentStudent.completedTasksScience = [];
+            if (!currentStudent.completedTasksIslamic) currentStudent.completedTasksIslamic = [];
         } else currentStudent = null;
     }
-
-    async function saveStudentProgress(studentId, completedArray, planId) {
-        const updateField = planId === 'physics' ? 'completedTasksPhysics' : 'completedTasksScience';
+    async function saveStudentProgress(studentId, completedArray, subject) {
+        const updateField = subject === 'physics' ? 'completedTasksPhysics' : (subject === 'science' ? 'completedTasksScience' : 'completedTasksIslamic');
         await db.collection('students').doc(studentId).update({ [updateField]: completedArray, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() });
     }
-
-    function getStudentCompletedBySubject(student, planId) {
-        if (planId === 'physics') return student.completedTasksPhysics || [];
-        if (planId === 'science') return student.completedTasksScience || [];
-        // للخطط الجديدة، نخزنها تحت مفتاح عام أو حسب المعرف
-        // سنخزن في حقل completedTasksOthers كائن يحتوي على planId كمفتاح
-        if (!student.completedTasksOthers) student.completedTasksOthers = {};
-        return student.completedTasksOthers[planId] || [];
-    }
-
-    async function saveStudentProgressGeneric(studentId, completedArray, planId) {
-        if (planId === 'physics') {
-            await db.collection('students').doc(studentId).update({ completedTasksPhysics: completedArray });
-        } else if (planId === 'science') {
-            await db.collection('students').doc(studentId).update({ completedTasksScience: completedArray });
-        } else {
-            // خطط جديدة
-            const doc = await db.collection('students').doc(studentId).get();
-            let data = doc.data();
-            if (!data.completedTasksOthers) data.completedTasksOthers = {};
-            data.completedTasksOthers[planId] = completedArray;
-            await db.collection('students').doc(studentId).update({ completedTasksOthers: data.completedTasksOthers });
+    async function loadAllStudents() {
+        const snapshot = await db.collection('students').get();
+        allStudents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        for (let s of allStudents) {
+            if (!s.completedTasksPhysics) s.completedTasksPhysics = [];
+            if (!s.completedTasksScience) s.completedTasksScience = [];
+            if (!s.completedTasksIslamic) s.completedTasksIslamic = [];
         }
     }
+    function getStudentCompletedBySubject(student, subject) {
+        if (subject === 'physics') return student.completedTasksPhysics || [];
+        if (subject === 'science') return student.completedTasksScience || [];
+        return student.completedTasksIslamic || [];
+    }
 
-    // ---------- Render Student UI ----------
+    // ============================================================
+    // عرض الطالب
+    async function initializeStudentWithSubject(subject) {
+        currentSubject = subject;
+        if (subject === 'physics') { await loadScheduleFromFirebase('physics'); currentSchedule = scheduleDataPhysics; }
+        else if (subject === 'science') { await loadScheduleFromFirebase('science'); currentSchedule = scheduleDataScience; }
+        else { await loadScheduleFromFirebase('islamic'); currentSchedule = scheduleDataIslamic; }
+        rebuildSubtaskIds();
+        buildStudentUI();
+        renderStudentView();
+    }
     function buildStudentUI() {
+        const subjectNames = { physics: 'الفيزياء', science: 'العلوم', islamic: 'الاسلامية' };
+        const icons = { physics: 'fa-flask', science: 'fa-dna', islamic: 'fa-mosque' };
         document.getElementById('appContainer').innerHTML = `
-            <div class="hero-area">
-                <div class="logo-title"><h1><i class="fas fa-seedling"></i> <span id="planNameDisplay">${currentPlan ? currentPlan.name : 'الخطة'}</span></h1></div>
-                <div id="planCarouselStudent"></div>
-            </div>
-            <div class="stats-panel">
-                <div><i class="fas fa-chart-line"></i> الإنجاز الكلي: <strong id="globalDone">0</strong> / <strong id="globalTotal">0</strong></div>
-                <div class="progress-bg"><div class="progress-fill-global" id="globalProgressFill" style="background: ${currentPlan?.color || '#2c6e3c'};"></div></div>
-            </div>
-            <div class="today-highlight" id="todaySpotlight"><div style="font-weight:800; margin-bottom:8px;"><i class="fas fa-calendar-day"></i> مهام اليوم</div><div id="todayTasksList"></div></div>
+            <div class="hero-area"><div class="logo-title"><h1><i class="fas fa-seedling"></i> 📘 خطة ${subjectNames[currentSubject]} <i class="fas ${icons[currentSubject]}"></i></h1></div>
+            <button id="switchSubjectBtn" class="btn-icon"><i class="fas fa-exchange-alt"></i> تبديل المادة</button></div>
+            <div class="stats-panel"><div><i class="fas fa-chart-line"></i> التقدم الكلي: <strong id="globalDone">0</strong> / <strong id="globalTotal">0</strong></div><div class="progress-bg"><div class="progress-fill-global" id="globalProgressFill"></div></div></div>
+            <div class="today-highlight" id="todaySpotlight"><div style="font-weight:800; margin-bottom:8px;"><i class="fas fa-calendar-day"></i> 🟢 مهام اليوم المباشرة</div><div id="todayTasksList"></div></div>
             <div id="allDaysContainer"></div>
-            <div class="motivational-board">${currentPlanId === 'physics' ? '<i class="fas fa-star-of-life"></i> 6/6 : النجاح حليف المجتهدين دائماً <i class="fas fa-star-of-life"></i><br><span>⚡ شد الهمة واصل</span>' : '<i class="fas fa-leaf"></i> 🧪 العلم نور والاجتهاد مفتاحه <i class="fas fa-leaf"></i><br><span>🌟 استمر في التقدم</span>'}</div>
-            <div class="footer-quote">💪 لا تقل أبداً بأنك لا تستطيع، بل قل بأنني سأفعلها بإذن الله</div>
-            <div class="developer-credit" onclick="window.open('https://wa.me/17862927607', '_blank');"><i class="fab fa-whatsapp"></i> المطور: حسام الحسين</div>
+            <div class="motivational-board">${currentSubject === 'physics' ? '<i class="fas fa-star-of-life"></i> السبت 6/6 : التقديم الممتاز للامتحان إن شاء الله <i class="fas fa-star-of-life"></i><br><span>✨ ثقة، مراجعة ذهنية، ودعوات ✨</span>' : (currentSubject === 'science' ? '<i class="fas fa-leaf"></i> خطة العلوم المكثفة مع المدد المحددة والاستراحات المنظمة <i class="fas fa-leaf"></i><br><span>✨ التزم بالبرنامج وستصل إلى القمة بإذن الله ✨</span>' : '<i class="fas fa-quran"></i> خطة الاسلامية المباركة مع تحديد المدد الزمنية <i class="fas fa-quran"></i><br><span>✨ اجعل النية خالصة ووفقك الله ✨</span>')}</div>
+            <div class="footer-quote">أنت أقوى مما تتصور، وأكثر مما تتخيل 🍂</div>
+            <div class="developer-credit" onclick="window.open('https://wa.me/17862927607', '_blank');"><i class="fab fa-whatsapp"></i> المطور: حسن المحمد</div>
         `;
-        renderPlanSelectors();
+        document.getElementById('switchSubjectBtn').addEventListener('click', () => showSubjectSwitchDialog());
         refreshSounds();
     }
-
-    function renderPlanSelectors() {
-        // للطالب
-        const carousel = document.getElementById('planCarouselStudent');
-        if (carousel) {
-            carousel.innerHTML = '';
-            const planIds = Object.keys(allPlans);
-            if (planIds.length === 0) {
-                carousel.innerHTML = '<span style="color:rgba(255,255,255,0.6);">لا توجد خطط</span>';
-                return;
-            }
-            planIds.forEach(id => {
-                const plan = allPlans[id];
-                const btn = document.createElement('button');
-                btn.className = `plan-carousel-btn ${id === currentPlanId ? 'active' : ''}`;
-                btn.style.borderColor = plan.color || '#aaa';
-                btn.style.color = id === currentPlanId ? plan.color : 'white';
-                btn.style.background = id === currentPlanId ? 'white' : 'rgba(255,255,255,0.1)';
-                btn.textContent = plan.name;
-                btn.onclick = async () => {
-                    if (id === currentPlanId) return;
-                    await loadPlan(id);
-                };
-                carousel.appendChild(btn);
-            });
-        }
-
-        // للمعلم (يتم استدعاؤها من renderTeacherView أيضاً)
-        const grid = document.getElementById('planGridTeacher');
-        if (grid) {
-            grid.innerHTML = '';
-            const planIds = Object.keys(allPlans);
-            planIds.forEach(id => {
-                const plan = allPlans[id];
-                const btn = document.createElement('button');
-                btn.className = `plan-grid-btn ${id === currentPlanId ? 'active' : ''}`;
-                btn.style.borderColor = plan.color || '#ccc';
-                btn.style.background = id === currentPlanId ? plan.color : '#f8f8f8';
-                btn.style.color = id === currentPlanId ? 'white' : '#333';
-                btn.textContent = plan.name;
-                btn.onclick = async () => {
-                    if (id === currentPlanId) return;
-                    await loadPlan(id);
-                };
-                grid.appendChild(btn);
-            });
-        }
-    }
-
     function renderStudentView() {
-        if (!currentStudent || !currentPlan) return;
-        const completedArray = getStudentCompletedBySubject(currentStudent, currentPlanId);
-        const completedMap = new Map(); 
-        completedArray.forEach(entry => { if (entry.taskId) completedMap.set(entry.taskId, entry.completedAt); });
-
+        if (!currentStudent) return;
+        const completedArray = getStudentCompletedBySubject(currentStudent, currentSubject);
+        const completedMap = new Map(); completedArray.forEach(entry => { if (entry.taskId) completedMap.set(entry.taskId, entry.completedAt); });
         const totalTasks = allSubTasks.length;
         const completedCount = completedMap.size;
         document.getElementById('globalDone').innerText = completedCount;
         document.getElementById('globalTotal').innerText = totalTasks;
-        const fill = document.getElementById('globalProgressFill');
-        if (fill) {
-            fill.style.width = `${totalTasks === 0 ? 0 : (completedCount / totalTasks) * 100}%`;
-            fill.style.background = currentPlan.color || '#2c6e3c';
-        }
-        document.getElementById('planNameDisplay').innerText = currentPlan.name;
-
+        document.getElementById('globalProgressFill').style.width = `${totalTasks === 0 ? 0 : (completedCount / totalTasks) * 100}%`;
         const todayContainer = document.getElementById('todayTasksList');
         todayContainer.innerHTML = '';
         let todayTasks = [];
-
-        // منطق تحديد مهام اليوم
-        if (currentPlanId === 'physics') {
+        if (currentSubject === 'physics') {
             const todayStr = `${new Date().getDate()}/${new Date().getMonth()+1}`;
             todayTasks = allSubTasks.filter(t => currentSchedule[t.dayIndex]?.date === todayStr);
         } else {
-            // أول يوم غير مكتمل
+            // العلوم والإسلامية: أول يوم غير مكتمل
             let firstIncompleteDay = null;
             for (let idx=0; idx<currentSchedule.length; idx++) {
                 const dayTasks = allSubTasks.filter(t => t.dayIndex === idx);
@@ -476,20 +435,18 @@
             if (firstIncompleteDay === null && currentSchedule.length>0) firstIncompleteDay = currentSchedule.length-1;
             if (firstIncompleteDay !== null) todayTasks = allSubTasks.filter(t => t.dayIndex === firstIncompleteDay);
         }
-
-        if (todayTasks.length===0) todayContainer.innerHTML='<div class="subtask-item">🎯 لا توجد مهام لهذا اليوم، أو أنه مكتمل!</div>';
+        if (todayTasks.length===0) todayContainer.innerHTML='<div class="subtask-item">✅ جميع المهام أنجزت أو لا توجد مهام لهذا اليوم</div>';
         else {
-            const morning = todayTasks.filter(t=>t.period==='الصباحية');
-            const evening = todayTasks.filter(t=>t.period==='المسائية');
+            const morning = todayTasks.filter(t=>t.period==='صباحية');
+            const evening = todayTasks.filter(t=>t.period==='مسائية');
             const wrapper = document.createElement('div'); wrapper.className='today-tasks-split';
             if (morning.length) {
                 const mornDiv = document.createElement('div'); mornDiv.className='today-period-block';
-                mornDiv.style.borderRightColor = currentPlan.color || '#2c7840';
                 mornDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div>`;
                 morning.forEach(task => {
                     const div = document.createElement('div');
                     div.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = (currentPlan?.calculationMethod === 'hours' && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
+                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
                     div.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
                     mornDiv.appendChild(div);
                 });
@@ -497,12 +454,11 @@
             }
             if (evening.length) {
                 const evenDiv = document.createElement('div'); evenDiv.className='today-period-block';
-                evenDiv.style.borderRightColor = currentPlan.color || '#2c7840';
                 evenDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-moon"></i> الفترة المسائية</div>`;
                 evening.forEach(task => {
                     const div = document.createElement('div');
                     div.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = (currentPlan?.calculationMethod === 'hours' && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
+                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
                     div.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
                     evenDiv.appendChild(div);
                 });
@@ -510,234 +466,253 @@
             }
             todayContainer.appendChild(wrapper);
         }
-
         const daysContainer = document.getElementById('allDaysContainer');
         daysContainer.innerHTML = '';
         currentSchedule.forEach((day, idx) => {
-            const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='الصباحية');
-            const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='المسائية');
+            const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='صباحية');
+            const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='مسائية');
             const completed = morningTasks.filter(t=>completedMap.has(t.id)).length + eveningTasks.filter(t=>completedMap.has(t.id)).length;
             const total = morningTasks.length+eveningTasks.length;
             const percent = total===0?0:(completed/total)*100;
-            let headerText = currentPlanId === 'physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber || idx+1} (${day.weekday || ''})`;
+            let headerText = currentSubject==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
             const dayCard = document.createElement('div'); dayCard.className='day-card';
-            const dayHeader = document.createElement('div'); dayHeader.className='day-header';
-            dayHeader.style.background = `linear-gradient(110deg, ${currentPlan.color}30, ${currentPlan.color}10)`;
-            dayHeader.innerHTML = `<div class="day-date">${headerText}</div>`;
-            dayCard.appendChild(dayHeader);
-            const body = document.createElement('div'); body.style.padding='0.5rem 1.5rem 1.2rem 1.5rem';
-            body.innerHTML = `<div style="font-weight:bold;">✅ الإنجاز: <span dir="ltr">${completed}/${total}</span> <div class="progress-bg" style="width:110px; height:8px; display:inline-block; margin-right:8px;"><div style="width:${percent}%; height:100%; background:${currentPlan.color || '#2e7d32'}; border-radius:40px;"></div></div></div>`;
-            dayCard.appendChild(body);
-            const periodDiv = document.createElement('div'); periodDiv.id = `dayContent-${idx}`;
-            body.appendChild(periodDiv);
-
+            dayCard.innerHTML = `<div class="day-header"><div class="day-date">${headerText}</div></div><div style="padding:0.5rem 1.8rem; font-weight:bold;">📊 التقدم: <span dir="ltr">${completed}/${total}</span> <div class="progress-bg" style="width:110px; height:8px; display:inline-block; margin-right:8px;"><div style="width:${percent}%; height:100%; background:#2e7d32; border-radius:40px;"></div></div></div><div style="padding:0.5rem 1.5rem 1.2rem 1.5rem;" id="dayContent-${idx}"></div>`;
+            daysContainer.appendChild(dayCard);
+            const periodDiv = dayCard.querySelector(`#dayContent-${idx}`);
             if (morningTasks.length) {
                 const mornBlock = document.createElement('div');
-                mornBlock.innerHTML = `<div class="period-title" style="border-right-color: ${currentPlan.color || '#3c8c40'};"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
+                mornBlock.innerHTML = `<div class="period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
                 periodDiv.appendChild(mornBlock);
                 const mornList = mornBlock.querySelector(`#mornList-${idx}`);
                 morningTasks.forEach(task => {
                     const taskDiv = document.createElement('div');
                     taskDiv.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = (currentPlan?.calculationMethod === 'hours' && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
+                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
                     taskDiv.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
                     mornList.appendChild(taskDiv);
                 });
             }
             if (eveningTasks.length) {
                 const evenBlock = document.createElement('div');
-                evenBlock.innerHTML = `<div class="period-title" style="border-right-color: ${currentPlan.color || '#3c8c40'};"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
+                evenBlock.innerHTML = `<div class="period-title"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
                 periodDiv.appendChild(evenBlock);
                 const evenList = evenBlock.querySelector(`#evenList-${idx}`);
                 eveningTasks.forEach(task => {
                     const taskDiv = document.createElement('div');
                     taskDiv.className = `subtask-item ${completedMap.has(task.id) ? 'completed-subtask' : ''}`;
-                    let durationHtml = (currentPlan?.calculationMethod === 'hours' && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
+                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<div class="duration-badge"><i class="fas fa-clock"></i> ${task.duration} ساعة</div>` : '';
                     taskDiv.innerHTML = `<input type="checkbox" class="subtask-check" data-id="${task.id}" ${completedMap.has(task.id) ? 'checked' : ''}><span style="flex:1;">${escapeHtml(cleanTaskText(task.text))}</span>${durationHtml}`;
                     evenList.appendChild(taskDiv);
                 });
             }
-            daysContainer.appendChild(dayCard);
         });
         attachTaskCheckEvents();
         refreshSounds();
     }
-
     function attachTaskCheckEvents() {
         document.querySelectorAll('.subtask-check').forEach(cb => {
             cb.removeEventListener('change', handleTaskToggle);
             cb.addEventListener('change', handleTaskToggle);
         });
     }
-
     async function handleTaskToggle(e) {
         const cb = e.target;
         const taskId = cb.getAttribute('data-id');
-        if (!currentStudent || !currentPlan) return;
-        let completed = getStudentCompletedBySubject(currentStudent, currentPlanId);
+        if (!currentStudent) return;
+        let completed = getStudentCompletedBySubject(currentStudent, currentSubject);
         if (cb.checked) { playSound('complete'); completed.push({ taskId, completedAt: Date.now() }); }
         else { completed = completed.filter(entry => entry.taskId !== taskId); }
-        
-        // حفظ في Firebase حسب الخطة
-        await saveStudentProgressGeneric(currentStudent.id, completed, currentPlanId);
-        // تحديث الكائن المحلي
-        if (currentPlanId === 'physics') currentStudent.completedTasksPhysics = completed;
-        else if (currentPlanId === 'science') currentStudent.completedTasksScience = completed;
-        else {
-            if (!currentStudent.completedTasksOthers) currentStudent.completedTasksOthers = {};
-            currentStudent.completedTasksOthers[currentPlanId] = completed;
-        }
+        await saveStudentProgress(currentStudent.id, completed, currentSubject);
+        const field = currentSubject==='physics' ? 'completedTasksPhysics' : (currentSubject==='science' ? 'completedTasksScience' : 'completedTasksIslamic');
+        currentStudent[field] = completed;
         renderStudentView();
         playBeep();
     }
-
-    // ---------- Teacher Functions ----------
-    async function loadAllStudents() {
-        const snapshot = await db.collection('students').get();
-        allStudents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        for (let s of allStudents) {
-            if (!s.completedTasksPhysics) s.completedTasksPhysics = [];
-            if (!s.completedTasksScience) s.completedTasksScience = [];
-            if (!s.completedTasksOthers) s.completedTasksOthers = {};
-        }
+    async function switchSubject(subject) {
+        if (subject===currentSubject) return;
+        playSound('select');
+        currentSubject = subject;
+        if (subject==='physics') { await loadScheduleFromFirebase('physics'); currentSchedule = scheduleDataPhysics; }
+        else if (subject==='science') { await loadScheduleFromFirebase('science'); currentSchedule = scheduleDataScience; }
+        else { await loadScheduleFromFirebase('islamic'); currentSchedule = scheduleDataIslamic; }
+        rebuildSubtaskIds();
+        buildStudentUI();
+        renderStudentView();
+        const names = { physics: 'الفيزياء', science: 'العلوم', islamic: 'الاسلامية' };
+        showToast(`تم التبديل إلى ${names[subject]}`);
+    }
+    function showSubjectSwitchDialog() {
+        const modal = document.createElement('div'); modal.className='modal active'; modal.style.zIndex='3000';
+        modal.innerHTML = `<div class="modal-content" style="max-width:450px; text-align:center;"><i class="fas fa-exchange-alt" style="font-size:3rem; color:#2c6e3c;"></i><h3>اختر المادة</h3><p>سيتم حفظ تقدمك تلقائياً.</p><div style="display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin:20px 0;">
+            <button id="switchToPhysics" class="btn" style="background:#1b5e2a;">⚛️ الفيزياء</button>
+            <button id="switchToScience" class="btn" style="background:#b85c1a;">🧬 العلوم</button>
+            <button id="switchToIslamic" class="btn" style="background:#2c6e3c;">🕌 الاسلامية</button>
+        </div><button id="cancelSwitchBtn" class="btn btn-danger">إلغاء</button></div>`;
+        document.body.appendChild(modal);
+        document.getElementById('switchToPhysics').onclick = () => { switchSubject('physics'); modal.remove(); };
+        document.getElementById('switchToScience').onclick = () => { switchSubject('science'); modal.remove(); };
+        document.getElementById('switchToIslamic').onclick = () => { switchSubject('islamic'); modal.remove(); };
+        document.getElementById('cancelSwitchBtn').onclick = () => modal.remove();
     }
 
+    // ========== لوحة المشرف (المعلم) ==========
     async function renderTeacherView() {
-        // تحديث الشبكة
-        renderPlanSelectors();
+        let tabsContainer = document.getElementById('subjectTabsContainer');
+        if (!tabsContainer) {
+            tabsContainer = document.createElement('div');
+            tabsContainer.id = 'subjectTabsContainer';
+            tabsContainer.className = 'filter-buttons';
+            tabsContainer.style.marginBottom = '20px';
+            const todaySpotlight = document.getElementById('todaySpotlight');
+            todaySpotlight.insertAdjacentElement('beforebegin', tabsContainer);
+        }
+        const subjects = [
+            { id: 'physics', label: '⚛️ الفيزياء' },
+            { id: 'science', label: '🧬 العلوم' },
+            { id: 'islamic', label: '🕌 الاسلامية' }
+        ];
+        tabsContainer.innerHTML = subjects.map(s => `<button id="tab${s.id.charAt(0).toUpperCase()+s.id.slice(1)}Teacher" class="filter-btn ${currentSubject === s.id ? 'active' : ''}">${s.label}</button>`).join('');
 
         await loadAllStudents();
+        // مهام اليوم
         const todayContainer = document.getElementById('todayTasksList');
         todayContainer.innerHTML = '';
         let todayTasks = [];
-        if (currentPlanId === 'physics') {
+        if (currentSubject === 'physics') {
             const todayStr = `${new Date().getDate()}/${new Date().getMonth()+1}`;
             todayTasks = allSubTasks.filter(t => currentSchedule[t.dayIndex]?.date === todayStr);
         } else {
-            // أول يوم غير مكتمل للمعلم أيضاً
-            let firstIncompleteDay = 0;
-            // نأخذ أول يوم لديه مهام
-            if (currentSchedule.length > 0) firstIncompleteDay = 0;
-            todayTasks = allSubTasks.filter(t => t.dayIndex === firstIncompleteDay);
+            // أول يوم غير مكتمل (للسياق: نأخذ أول يوم)
+            if (currentSchedule.length > 0) {
+                const firstDayTasks = allSubTasks.filter(t => t.dayIndex === 0);
+                todayTasks = firstDayTasks;
+            }
         }
-
-        if (todayTasks.length===0) todayContainer.innerHTML='<div class="subtask-item">لا توجد مهام لهذا اليوم</div>';
+        if (todayTasks.length===0) todayContainer.innerHTML='<div class="subtask-item">✅ لا توجد مهام لهذا اليوم</div>';
         else {
-            const morning = todayTasks.filter(t=>t.period==='الصباحية');
-            const evening = todayTasks.filter(t=>t.period==='المسائية');
+            const morning = todayTasks.filter(t=>t.period==='صباحية');
+            const evening = todayTasks.filter(t=>t.period==='مسائية');
             const wrapper = document.createElement('div'); wrapper.className='today-tasks-split';
             if (morning.length) {
                 const mornDiv = document.createElement('div'); mornDiv.className='today-period-block';
-                mornDiv.style.borderRightColor = currentPlan.color || '#2c7840';
                 mornDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div>`;
                 for (const task of morning) {
-                    const completedCount = allStudents.filter(s => {
-                        const comp = getStudentCompletedBySubject(s, currentPlanId);
-                        return comp.some(entry => entry.taskId === task.id);
-                    }).length;
+                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
                     const totalStudents = allStudents.length;
                     const fraction = `${completedCount}/${totalStudents}`;
                     const div = document.createElement('div'); div.className='subtask-item';
-                    div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">👥 ${fraction}</span></button>`;
+                    div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
                     mornDiv.appendChild(div);
                 }
                 wrapper.appendChild(mornDiv);
             }
             if (evening.length) {
                 const evenDiv = document.createElement('div'); evenDiv.className='today-period-block';
-                evenDiv.style.borderRightColor = currentPlan.color || '#2c7840';
                 evenDiv.innerHTML = `<div class="today-period-title"><i class="fas fa-moon"></i> الفترة المسائية</div>`;
                 for (const task of evening) {
-                    const completedCount = allStudents.filter(s => {
-                        const comp = getStudentCompletedBySubject(s, currentPlanId);
-                        return comp.some(entry => entry.taskId === task.id);
-                    }).length;
+                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
                     const totalStudents = allStudents.length;
                     const fraction = `${completedCount}/${totalStudents}`;
                     const div = document.createElement('div'); div.className='subtask-item';
-                    div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">👥 ${fraction}</span></button>`;
+                    div.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
                     evenDiv.appendChild(div);
                 }
                 wrapper.appendChild(evenDiv);
             }
             todayContainer.appendChild(wrapper);
         }
-
+        // عرض الأيام
         const daysContainer = document.getElementById('allDaysContainer');
         daysContainer.innerHTML = '';
         for (let idx=0; idx<currentSchedule.length; idx++) {
             const day = currentSchedule[idx];
-            const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='الصباحية');
-            const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='المسائية');
-            const isToday = (currentPlanId==='physics' && day.date === `${new Date().getDate()}/${new Date().getMonth()+1}`);
+            const morningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='صباحية');
+            const eveningTasks = allSubTasks.filter(t=>t.dayIndex===idx && t.period==='مسائية');
+            const isToday = (currentSubject==='physics' && day.date === `${new Date().getDate()}/${new Date().getMonth()+1}`);
             const dayCard = document.createElement('div'); dayCard.className=`day-card ${isToday ? 'today-active' : ''}`;
-            if (isToday) dayCard.style.borderColor = currentPlan.color || '#2e7d32';
-            let headerText = currentPlanId==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber || idx+1} (${day.weekday || ''})`;
-            const dayHeader = document.createElement('div'); dayHeader.className='day-header';
-            dayHeader.style.background = `linear-gradient(110deg, ${currentPlan.color}30, ${currentPlan.color}10)`;
-            dayHeader.innerHTML = `<div class="day-date">${headerText}</div>`;
-            dayCard.appendChild(dayHeader);
-            const body = document.createElement('div'); body.style.padding='0.5rem 1.5rem 1.2rem 1.5rem';
-            dayCard.appendChild(body);
-            const periodDiv = document.createElement('div'); periodDiv.id = `dayContent-${idx}`;
-            body.appendChild(periodDiv);
-
+            let headerText = currentSubject==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
+            dayCard.innerHTML = `<div class="day-header"><div class="day-date">${headerText}</div></div><div style="padding:0.5rem 1.5rem 1.2rem 1.5rem;" id="dayContent-${idx}"></div>`;
+            daysContainer.appendChild(dayCard);
+            const periodDiv = dayCard.querySelector(`#dayContent-${idx}`);
             if (morningTasks.length) {
                 const mornBlock = document.createElement('div');
-                mornBlock.innerHTML = `<div class="period-title" style="border-right-color: ${currentPlan.color || '#3c8c40'};"><i class="fas fa-sun"></i> الصباحية</div><div id="mornList-${idx}"></div>`;
+                mornBlock.innerHTML = `<div class="period-title"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornList-${idx}"></div>`;
                 periodDiv.appendChild(mornBlock);
                 const mornList = mornBlock.querySelector(`#mornList-${idx}`);
                 for (const task of morningTasks) {
-                    const completedCount = allStudents.filter(s => {
-                        const comp = getStudentCompletedBySubject(s, currentPlanId);
-                        return comp.some(entry => entry.taskId === task.id);
-                    }).length;
+                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
                     const totalStudents = allStudents.length;
                     const fraction = `${completedCount}/${totalStudents}`;
                     const taskDiv = document.createElement('div'); taskDiv.className='subtask-item';
-                    taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">👥 ${fraction}</span></button>`;
+                    taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
                     mornList.appendChild(taskDiv);
                 }
             }
             if (eveningTasks.length) {
                 const evenBlock = document.createElement('div');
-                evenBlock.innerHTML = `<div class="period-title" style="border-right-color: ${currentPlan.color || '#3c8c40'};"><i class="fas fa-moon"></i> المسائية</div><div id="evenList-${idx}"></div>`;
+                evenBlock.innerHTML = `<div class="period-title"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenList-${idx}"></div>`;
                 periodDiv.appendChild(evenBlock);
                 const evenList = evenBlock.querySelector(`#evenList-${idx}`);
                 for (const task of eveningTasks) {
-                    const completedCount = allStudents.filter(s => {
-                        const comp = getStudentCompletedBySubject(s, currentPlanId);
-                        return comp.some(entry => entry.taskId === task.id);
-                    }).length;
+                    const completedCount = allStudents.filter(s => getStudentCompletedBySubject(s, currentSubject).some(entry => entry.taskId === task.id)).length;
                     const totalStudents = allStudents.length;
                     const fraction = `${completedCount}/${totalStudents}`;
                     const taskDiv = document.createElement('div'); taskDiv.className='subtask-item';
-                    taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">👥 ${fraction}</span></button>`;
+                    taskDiv.innerHTML = `<span>${escapeHtml(cleanTaskText(task.text))}</span><button class="detail-btn" data-task-id="${task.id}"><span class="ltr-fraction">📊 ${fraction}</span></button>`;
                     evenList.appendChild(taskDiv);
                 }
             }
-            daysContainer.appendChild(dayCard);
         }
-
         document.querySelectorAll('.detail-btn').forEach(btn => {
             btn.addEventListener('click', () => { const taskId = btn.getAttribute('data-task-id'); showTaskDetails(taskId); });
         });
-
+        // أحداث التبويب
+        document.getElementById('tabPhysicsTeacher').onclick = async () => {
+            currentSubject = 'physics';
+            await loadScheduleFromFirebase('physics');
+            currentSchedule = scheduleDataPhysics;
+            rebuildSubtaskIds();
+            await loadAllStudents();
+            document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - فيزياء 2026';
+            document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب بشكل لحظي ✨';
+            renderTeacherView();
+        };
+        document.getElementById('tabScienceTeacher').onclick = async () => {
+            currentSubject = 'science';
+            await loadScheduleFromFirebase('science');
+            currentSchedule = scheduleDataScience;
+            rebuildSubtaskIds();
+            await loadAllStudents();
+            document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - علوم 2026';
+            document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب في العلوم بشكل لحظي ✨';
+            renderTeacherView();
+        };
+        document.getElementById('tabIslamicTeacher').onclick = async () => {
+            currentSubject = 'islamic';
+            await loadScheduleFromFirebase('islamic');
+            currentSchedule = scheduleDataIslamic;
+            rebuildSubtaskIds();
+            await loadAllStudents();
+            document.querySelector('.hero-area .logo-title h1').innerHTML = '<i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - اسلامية 2026';
+            document.querySelector('.motivational-board').innerHTML = '✨ متابعة تقدم الطلاب في الاسلامية بشكل لحظي ✨';
+            renderTeacherView();
+        };
         const statsPanel = document.querySelector('.stats-panel');
         if (statsPanel) statsPanel.style.display = 'none';
         refreshSounds();
     }
 
+    // ========== تفاصيل المهمة ==========
     async function showTaskDetails(taskId) {
         const task = allSubTasks.find(t => t.id === taskId);
         if (!task) return;
         await loadAllStudents();
         const completedStudents = allStudents.filter(s => {
-            const comp = getStudentCompletedBySubject(s, currentPlanId);
-            return comp.some(entry => entry.taskId === taskId);
+            const completed = getStudentCompletedBySubject(s, currentSubject);
+            return completed.some(entry => entry.taskId === taskId);
         }).map(s => {
-            const comp = getStudentCompletedBySubject(s, currentPlanId);
-            const entry = comp.find(e => e.taskId === taskId);
+            const completed = getStudentCompletedBySubject(s, currentSubject);
+            const entry = completed.find(e => e.taskId === taskId);
             return { student: s, completedAt: entry.completedAt };
         });
         let currentFilter = 'all';
@@ -760,7 +735,7 @@
             if (!statsDiv) {
                 const titleDiv = document.getElementById('taskStatTitle');
                 statsDiv = document.createElement('div'); statsDiv.id='taskStatsInfo'; statsDiv.style.background='#f0f7f0'; statsDiv.style.padding='12px'; statsDiv.style.borderRadius='1rem'; statsDiv.style.margin='10px 0';
-                statsDiv.innerHTML = `<div><strong>👥 الكل:</strong> <span id="totalCount"></span> (<span id="totalPercent"></span>%)</div><div><strong>🧑 الذكور:</strong> <span id="maleCount"></span> (<span id="malePercent"></span>%)</div><div><strong>👩 الإناث:</strong> <span id="femaleCount"></span> (<span id="femalePercent"></span>%)</div>`;
+                statsDiv.innerHTML = `<div><strong>📊 إجمالي المنجزين:</strong> <span id="totalCount"></span> (<span id="totalPercent"></span>%)</div><div><strong>♂ الذكور:</strong> <span id="maleCount"></span> (<span id="malePercent"></span>%)</div><div><strong>♀ الإناث:</strong> <span id="femaleCount"></span> (<span id="femalePercent"></span>%)</div>`;
                 titleDiv.insertAdjacentElement('afterend', statsDiv);
             }
             document.getElementById('totalCount').innerHTML = `<span dir="ltr">${totalCompleted}/${totalStudents}</span>`;
@@ -780,7 +755,10 @@
             if (filtered.length===0) listDiv.innerHTML='<div class="student-item">لا يوجد طلاب</div>';
             document.querySelectorAll('#studentsCompletedListModal .student-name').forEach(el => {
                 el.removeEventListener('click', studentClickHandler);
-                el.addEventListener('click', studentClickHandler);
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    studentClickHandler.call(this, e);
+                });
             });
         }
         function studentClickHandler(e) {
@@ -804,32 +782,44 @@
         modal.classList.add('active');
     }
 
+    // ========== عرض مهام الطالب مع الساعات ==========
     async function showStudentTasks(studentId) {
+        const existingModal = document.getElementById('studentTasksModal');
+        if (existingModal) existingModal.classList.remove('active');
         const student = allStudents.find(s => s.id === studentId);
-        if (!student) return;
-        const completedEntries = getStudentCompletedBySubject(student, currentPlanId);
+        if (!student) { console.warn("الطالب غير موجود:", studentId); return; }
+        const completedEntries = getStudentCompletedBySubject(student, currentSubject);
         const completedTasksList = [];
         for (const entry of completedEntries) {
             const task = allSubTasks.find(t => t.id === entry.taskId);
             if (!task) continue;
             const day = currentSchedule[task.dayIndex];
-            const dateStr = currentPlanId === 'physics' ? (day ? day.date : '?') : (day ? `اليوم ${day.dayNumber}` : '?');
-            completedTasksList.push({ text: task.text, completedAt: entry.completedAt, date: dateStr, duration: task.duration });
+            const dateStr = currentSubject === 'physics' ? (day ? day.date : '?') : (day ? `اليوم ${day.dayNumber}` : '?');
+            completedTasksList.push({ 
+                text: task.text, 
+                completedAt: entry.completedAt, 
+                date: dateStr, 
+                duration: task.duration 
+            });
         }
-
         const totalHours = getTotalHoursOfPlan();
         const completedHours = getCompletedHoursForStudent(student);
         const percent = totalHours === 0 ? 0 : ((completedHours / totalHours) * 100).toFixed(1);
         const taskPercent = allSubTasks.length === 0 ? 0 : ((completedTasksList.length / allSubTasks.length) * 100).toFixed(1);
-
         const titleEl = document.getElementById('studentTasksTitle');
         if (titleEl) {
             titleEl.innerHTML = `
                 <div style="text-align:center;">
-                    <div style="font-size:1.2rem; margin-bottom:8px;"><i class="fas fa-user-graduate"></i> ${escapeHtml(student.fullName)}</div>
+                    <div style="font-size:1.2rem; margin-bottom:8px;">
+                        <i class="fas fa-user-graduate"></i> ${escapeHtml(student.fullName)}
+                    </div>
                     <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; font-size:0.9rem;">
-                        <span style="background:#e8f5e9; padding:4px 12px; border-radius:20px;"><i class="fas fa-tasks"></i> المهام: ${completedTasksList.length}/${allSubTasks.length} (${taskPercent}%)</span>
-                        <span style="background:#e3f2fd; padding:4px 12px; border-radius:20px;"><i class="fas fa-clock"></i> الساعات: ${completedHours.toFixed(1)}/${totalHours.toFixed(1)} (${percent}%)</span>
+                        <span style="background:#e8f5e9; padding:4px 12px; border-radius:20px;">
+                            <i class="fas fa-tasks"></i> المهام: ${completedTasksList.length}/${allSubTasks.length} (${taskPercent}%)
+                        </span>
+                        <span style="background:#e3f2fd; padding:4px 12px; border-radius:20px;">
+                            <i class="fas fa-clock"></i> الساعات: ${completedHours.toFixed(1)}/${totalHours.toFixed(1)} (${percent}%)
+                        </span>
                     </div>
                 </div>
             `;
@@ -837,11 +827,11 @@
         const container = document.getElementById('studentTasksList');
         if (container) {
             if (completedTasksList.length === 0) {
-                container.innerHTML = '<div class="student-task-card">لا توجد مهام مكتملة</div>';
+                container.innerHTML = '<div class="student-task-card">📭 لا توجد مهام منجزة بعد</div>';
             } else {
                 container.innerHTML = completedTasksList.map(task => {
                     const timeDateStr = formatTimeAndDate(task.completedAt);
-                    let durationHtml = (currentPlan?.calculationMethod === 'hours' && task.duration) ? `<span class="duration-badge" style="background:#2196f3;"><i class="fas fa-clock"></i> ${task.duration} ساعة</span>` : '';
+                    let durationHtml = ((currentSubject==='science'||currentSubject==='islamic') && task.duration) ? `<span class="duration-badge" style="background:#2196f3;"><i class="fas fa-clock"></i> ${task.duration} ساعة</span>` : '';
                     return `<div class="student-task-card"><i class="fas fa-check-circle student-task-icon"></i><div style="flex:1;"><div style="font-weight:bold;">${escapeHtml(cleanTaskText(task.text))}</div><div style="font-size:0.75rem; color:#4a6741;">🕒 ${timeDateStr}</div></div>${durationHtml}</div>`;
                 }).join('');
             }
@@ -856,6 +846,7 @@
         playSound('select');
     }
 
+    // ========== قائمة الطلاب ==========
     async function showAllStudentsDialog() {
         await loadAllStudents();
         let currentFilter = 'all';
@@ -871,12 +862,12 @@
             listDiv.innerHTML = '';
             filtered.forEach(s => {
                 let percent = 0;
-                if (currentPlan?.calculationMethod === 'hours') {
+                if (currentSubject === 'science' || currentSubject === 'islamic') {
                     const totalHours = getTotalHoursOfPlan();
                     const completedHours = getCompletedHoursForStudent(s);
                     percent = totalHours === 0 ? 0 : (completedHours / totalHours) * 100;
                 } else {
-                    const completedCount = getStudentCompletedBySubject(s, currentPlanId).length;
+                    const completedCount = getStudentCompletedBySubject(s, currentSubject).length;
                     percent = allSubTasks.length === 0 ? 0 : (completedCount / allSubTasks.length) * 100;
                 }
                 const div = document.createElement('div'); div.className='student-item';
@@ -907,9 +898,8 @@
         modal.classList.add('active');
     }
 
-    // ---------- Edit Schedule (Teacher) ----------
+    // ========== تعديل الخطة ==========
     async function openEditSchedule() {
-        if (!currentPlan) return;
         const editDiv = document.getElementById('editScheduleFields');
         editDiv.innerHTML = '';
         const modalContent = document.querySelector('#editScheduleModal .modal-content');
@@ -924,10 +914,10 @@
             const morningItems = splitSub(day.morning);
             const eveningItems = splitSub(day.evening);
             const dayDiv = document.createElement('div'); dayDiv.className='edit-day-item';
-            let headerText = currentPlanId==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber || idx+1} (${day.weekday || ''})`;
-            dayDiv.innerHTML = `<div class="edit-day-header" style="border-right-color: ${currentPlan.color};">📋 ${headerText}</div>`;
+            let headerText = currentSubject==='physics' ? `${day.date} - ${day.weekday}` : `اليوم ${day.dayNumber} (${day.weekday})`;
+            dayDiv.innerHTML = `<div class="edit-day-header">📅 ${headerText}</div>`;
             const mornDiv = document.createElement('div'); mornDiv.className='period-edit';
-            mornDiv.innerHTML = `<div style="font-weight:bold; margin-bottom:8px;"><i class="fas fa-sun"></i> الصباحية</div><div id="mornEditList-${idx}"></div><button class="add-subtask-btn" data-day="${idx}" data-period="morning"><i class="fas fa-plus"></i> إضافة مهمة</button>`;
+            mornDiv.innerHTML = `<div style="font-weight:bold; margin-bottom:8px;"><i class="fas fa-sun"></i> الفترة الصباحية</div><div id="mornEditList-${idx}"></div><button class="add-subtask-btn" data-day="${idx}" data-period="morning"><i class="fas fa-plus"></i> إضافة مهمة</button>`;
             dayDiv.appendChild(mornDiv);
             const mornContainer = mornDiv.querySelector(`#mornEditList-${idx}`);
             morningItems.forEach((task,i) => {
@@ -936,7 +926,7 @@
                 mornContainer.appendChild(taskDiv);
             });
             const evenDiv = document.createElement('div'); evenDiv.className='period-edit';
-            evenDiv.innerHTML = `<div style="font-weight:bold; margin-bottom:8px;"><i class="fas fa-moon"></i> المسائية</div><div id="evenEditList-${idx}"></div><button class="add-subtask-btn" data-day="${idx}" data-period="evening"><i class="fas fa-plus"></i> إضافة مهمة</button>`;
+            evenDiv.innerHTML = `<div style="font-weight:bold; margin-bottom:8px;"><i class="fas fa-moon"></i> الفترة المسائية</div><div id="evenEditList-${idx}"></div><button class="add-subtask-btn" data-day="${idx}" data-period="evening"><i class="fas fa-plus"></i> إضافة مهمة</button>`;
             dayDiv.appendChild(evenDiv);
             const evenContainer = evenDiv.querySelector(`#evenEditList-${idx}`);
             eveningItems.forEach((task,i) => {
@@ -947,14 +937,13 @@
             scrollDiv.appendChild(dayDiv);
         }
         const footer = document.createElement('div'); footer.className='sticky-footer';
-        footer.innerHTML = `<button id="confirmSaveSchedule" class="btn" style="background:${currentPlan.color};">💾 حفظ التعديلات</button><button id="cancelEditSchedule" class="btn btn-danger">إلغاء</button>`;
+        footer.innerHTML = `<button id="confirmSaveSchedule" class="btn">💾 حفظ التغييرات</button><button id="cancelEditSchedule" class="btn btn-danger">إلغاء</button>`;
         modalContent.appendChild(footer);
         document.getElementById('confirmSaveSchedule').onclick = () => saveScheduleChanges();
         document.getElementById('cancelEditSchedule').onclick = () => document.getElementById('editScheduleModal').classList.remove('active');
         attachEditEvents();
         document.getElementById('editScheduleModal').classList.add('active');
     }
-
     function attachEditEvents() {
         document.querySelectorAll('.delete-subtask').forEach(btn => { btn.removeEventListener('click', handleDelete); btn.addEventListener('click', handleDelete); });
         document.querySelectorAll('.add-subtask-btn').forEach(btn => { btn.removeEventListener('click', handleAdd); btn.addEventListener('click', handleAdd); });
@@ -962,7 +951,6 @@
     async function handleDelete(e) { const btn=e.currentTarget; const dayIdx=parseInt(btn.dataset.day); const period=btn.dataset.period; const idx=parseInt(btn.dataset.idx); const container = period==='morning'?document.getElementById(`mornEditList-${dayIdx}`):document.getElementById(`evenEditList-${dayIdx}`); const items=Array.from(container.children); if(idx<items.length) items[idx].remove(); reindexEditItems(dayIdx); }
     function handleAdd(e) { const btn=e.currentTarget; const dayIdx=parseInt(btn.dataset.day); const period=btn.dataset.period; const container = period==='morning'?document.getElementById(`mornEditList-${dayIdx}`):document.getElementById(`evenEditList-${dayIdx}`); const newIdx=container.children.length; const taskDiv=document.createElement('div'); taskDiv.className='subtask-edit-item'; taskDiv.innerHTML = `<textarea rows="2" style="flex:1;" data-day="${dayIdx}" data-period="${period}" data-idx="${newIdx}">مهمة جديدة</textarea><button class="delete-subtask" data-day="${dayIdx}" data-period="${period}" data-idx="${newIdx}"><i class="fas fa-trash-alt"></i></button>`; container.appendChild(taskDiv); attachEditEvents(); reindexEditItems(dayIdx); }
     function reindexEditItems(dayIdx) { document.querySelectorAll(`#mornEditList-${dayIdx} textarea, #evenEditList-${dayIdx} textarea`).forEach((inp,newIdx)=>{ inp.setAttribute('data-idx',newIdx); }); document.querySelectorAll(`#mornEditList-${dayIdx} .delete-subtask, #evenEditList-${dayIdx} .delete-subtask`).forEach((delBtn,newIdx)=>{ delBtn.setAttribute('data-idx',newIdx); }); }
-
     async function saveScheduleChanges() {
         const newDays = [];
         for (let i=0; i<currentSchedule.length; i++) {
@@ -971,334 +959,151 @@
             const morningTexts = Array.from(morningTextareas).map(ta=>ta.value.trim()).filter(t=>t);
             const eveningTexts = Array.from(eveningTextareas).map(ta=>ta.value.trim()).filter(t=>t);
             const oldDay = currentSchedule[i];
-            newDays.push({ 
-                dayNumber: oldDay.dayNumber || i+1, 
-                weekday: oldDay.weekday || `اليوم ${i+1}`, 
-                morning: morningTexts.join('\n'), 
-                evening: eveningTexts.join('\n') 
-            });
+            if (currentSubject==='physics') newDays.push({ date: oldDay.date, weekday: oldDay.weekday, morning: morningTexts.join('\n'), evening: eveningTexts.join('\n') });
+            else newDays.push({ dayNumber: oldDay.dayNumber, weekday: `اليوم ${oldDay.dayNumber}`, morning: morningTexts.join('\n'), evening: eveningTexts.join('\n') });
         }
-        // تحديث الخطة في Firebase
-        await db.collection('plans').doc(currentPlanId).update({ days: newDays });
-        // تحديث الكائن المحلي
-        allPlans[currentPlanId].days = newDays;
+        let tempSubTasks = []; let idCounter=0;
+        newDays.forEach((day,dayIdx)=>{
+            splitSub(day.morning).forEach(text=>{ let duration=(currentSubject==='science'||currentSubject==='islamic')?extractDuration(text):1; tempSubTasks.push({ id:`task_${idCounter++}`, dayIndex:dayIdx, period:'صباحية', text, duration }); });
+            splitSub(day.evening).forEach(text=>{ let duration=(currentSubject==='science'||currentSubject==='islamic')?extractDuration(text):1; tempSubTasks.push({ id:`task_${idCounter++}`, dayIndex:dayIdx, period:'مسائية', text, duration }); });
+        });
+        const taskTransferMap = new Map();
+        for (let newTask of tempSubTasks) {
+            const oldTask = allSubTasks.find(t=>t.dayIndex===newTask.dayIndex && t.period===newTask.period && t.text===newTask.text);
+            if (oldTask) taskTransferMap.set(newTask.id, oldTask.id);
+        }
+        if (currentSubject==='physics') scheduleDataPhysics = newDays;
+        else if (currentSubject==='science') scheduleDataScience = newDays;
+        else scheduleDataIslamic = newDays;
         currentSchedule = newDays;
+        await saveScheduleToFirebase(currentSubject, newDays);
+        const oldTaskIds = allSubTasks.map(t=>t.id);
+        const newTaskIds = tempSubTasks.map(t=>t.id);
+        const removedTaskIds = oldTaskIds.filter(id=>!newTaskIds.includes(id));
+        for (let id of removedTaskIds) await removeTaskFromAllStudents(id, currentSubject);
+        const studentsSnap = await db.collection('students').get();
+        const batch = db.batch();
+        const field = currentSubject==='physics'?'completedTasksPhysics':(currentSubject==='science'?'completedTasksScience':'completedTasksIslamic');
+        for (const doc of studentsSnap.docs) {
+            let completed = doc.data()[field] || [];
+            let updated = false;
+            for (let [newId, oldId] of taskTransferMap.entries()) {
+                const entry = completed.find(e=>e.taskId===oldId);
+                if (entry) {
+                    completed = completed.filter(e=>e.taskId!==oldId);
+                    completed.push({ taskId: newId, completedAt: entry.completedAt });
+                    updated = true;
+                }
+            }
+            if (updated) batch.update(doc.ref, { [field]: completed });
+        }
+        await batch.commit();
+        await loadAllStudents();
         rebuildSubtaskIds();
-        // إعادة التوجيه
-        if (isTeacherMode) await renderTeacherView();
-        else renderStudentView();
+        if (adminAuthenticated) await renderTeacherView();
+        else if (currentStudent) renderStudentView();
         document.getElementById('editScheduleModal').classList.remove('active');
-        showCustomModal("✅ تم حفظ التعديلات بنجاح!");
+        showCustomModal("تم حفظ التعديلات بنجاح");
         playSound('success');
     }
 
-    // ---------- Add New Plan Wizard ----------
-    async function openAddPlanWizard() {
-        const modal = document.createElement('div');
-        modal.className = 'modal active';
-        modal.id = 'addPlanModal';
-        modal.style.zIndex = '4000';
-        modal.innerHTML = `
-            <div class="modal-content" style="max-width: 850px;">
-                <h3 style="color:#1f5437; margin-bottom:20px;">➕ إضافة خطة جديدة</h3>
-                <div id="wizardSteps">
-                    <div class="wizard-step active" data-step="1">
-                        <h4>الخطوة 1: اسم المادة</h4>
-                        <input type="text" id="planNameInput" placeholder="مثال: الكيمياء" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc; margin-top:10px; font-family:inherit;">
-                    </div>
-                    <div class="wizard-step" data-step="2">
-                        <h4>الخطوة 2: طريقة حساب النسبة</h4>
-                        <select id="calcMethodSelect" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc; margin-top:10px; font-family:inherit;">
-                            <option value="tasks">بالمهام (كل مهمة = 1)</option>
-                            <option value="hours">بالساعات (استخدام {رقم})</option>
-                        </select>
-                    </div>
-                    <div class="wizard-step" data-step="3">
-                        <h4>الخطوة 3: عدد الأيام</h4>
-                        <input type="number" id="daysCountInput" min="1" max="30" value="5" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc; margin-top:10px; font-family:inherit;">
-                    </div>
-                    <div class="wizard-step" data-step="4">
-                        <h4>الخطوة 4: اختيار اللون المميز</h4>
-                        <input type="color" id="planColorPicker" value="#2c6e3c" style="width:100%; height:50px; border-radius:1rem; border:1px solid #ccc; margin-top:10px; cursor:pointer;">
-                    </div>
-                    <div class="wizard-step" data-step="5">
-                        <h4>الخطوة 5: تحرير الأيام</h4>
-                        <div id="daysEditContainer" style="max-height:400px; overflow-y:auto; margin:10px 0;"></div>
-                    </div>
-                </div>
-                <div class="wizard-nav">
-                    <button id="wizardPrev" class="btn" style="background:#aaa;">السابق</button>
-                    <button id="wizardNext" class="btn" style="background:${currentPlan?.color || '#2c6e3c'};">التالي</button>
-                    <button id="wizardSave" class="btn" style="background:#4caf50; display:none;">💾 حفظ الخطة</button>
-                    <button id="wizardCancel" class="btn btn-danger">إلغاء</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        let currentStep = 1;
-        const totalSteps = 5;
-        const steps = modal.querySelectorAll('.wizard-step');
-        const nextBtn = document.getElementById('wizardNext');
-        const prevBtn = document.getElementById('wizardPrev');
-        const saveBtn = document.getElementById('wizardSave');
-        const cancelBtn = document.getElementById('wizardCancel');
-        const daysContainer = document.getElementById('daysEditContainer');
-
-        function updateDaysEdit() {
-            const count = parseInt(document.getElementById('daysCountInput').value) || 5;
-            daysContainer.innerHTML = '';
-            for (let i=1; i<=count; i++) {
-                const div = document.createElement('div');
-                div.className = 'day-edit-row';
-                div.style.borderRightColor = document.getElementById('planColorPicker').value;
-                div.innerHTML = `
-                    <input type="text" placeholder="اسم اليوم (اختياري)" value="اليوم ${i}" data-day="${i}">
-                    <label class="period-label">☀️ المهام الصباحية:</label>
-                    <textarea data-period="morning" data-day="${i}" placeholder="أدخل المهام كل مهمة في سطر">مهمة 1\nمهمة 2</textarea>
-                    <label class="period-label">🌙 المهام المسائية:</label>
-                    <textarea data-period="evening" data-day="${i}" placeholder="أدخل المهام كل مهمة في سطر">مهمة 3</textarea>
-                `;
-                daysContainer.appendChild(div);
-            }
-        }
-
-        document.getElementById('daysCountInput').addEventListener('input', updateDaysEdit);
-        document.getElementById('planColorPicker').addEventListener('input', () => {
-            const color = document.getElementById('planColorPicker').value;
-            document.querySelectorAll('.day-edit-row').forEach(row => row.style.borderRightColor = color);
-        });
-
-        function showStep(step) {
-            steps.forEach((el, idx) => {
-                el.classList.toggle('active', idx === step-1);
-            });
-            prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
-            nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
-            saveBtn.style.display = step === totalSteps ? 'inline-block' : 'none';
-            if (step === totalSteps) updateDaysEdit();
-            currentStep = step;
-        }
-
-        nextBtn.onclick = () => { if (currentStep < totalSteps) showStep(currentStep + 1); };
-        prevBtn.onclick = () => { if (currentStep > 1) showStep(currentStep - 1); };
-
-        saveBtn.onclick = async () => {
-            const name = document.getElementById('planNameInput').value.trim();
-            const color = document.getElementById('planColorPicker').value;
-            const method = document.getElementById('calcMethodSelect').value;
-            if (!name) { showToast('يرجى إدخال اسم المادة', true); return; }
-            const days = [];
-            const rows = daysContainer.querySelectorAll('.day-edit-row');
-            rows.forEach((row, idx) => {
-                const nameInput = row.querySelector('input[type="text"]');
-                const morningTA = row.querySelector('textarea[data-period="morning"]');
-                const eveningTA = row.querySelector('textarea[data-period="evening"]');
-                days.push({
-                    dayNumber: idx+1,
-                    weekday: nameInput ? nameInput.value : `اليوم ${idx+1}`,
-                    morning: morningTA ? morningTA.value : '',
-                    evening: eveningTA ? eveningTA.value : ''
-                });
-            });
-            const newPlanData = {
-                name: name,
-                color: color,
-                calculationMethod: method,
-                days: days,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            try {
-                const docRef = await db.collection('plans').add(newPlanData);
-                allPlans[docRef.id] = { ...newPlanData, id: docRef.id };
-                modal.remove();
-                showToast(`✅ تم إضافة خطة "${name}" بنجاح!`);
-                await loadPlan(docRef.id);
-                if (isTeacherMode) await renderTeacherView();
-                else renderStudentView();
-                renderPlanSelectors();
-                playSound('success');
-            } catch(e) {
-                showToast('حدث خطأ أثناء الحفظ', true);
-                console.error(e);
-            }
-        };
-
-        cancelBtn.onclick = () => modal.remove();
-        showStep(1);
-        // إضافة مستمع للون
-        document.getElementById('planColorPicker').addEventListener('input', () => {
-            const color = document.getElementById('planColorPicker').value;
-            document.querySelectorAll('.day-edit-row').forEach(row => row.style.borderRightColor = color);
-        });
-        refreshSounds();
-    }
-
-    // ---------- Utilities ----------
-    function formatTimeAndDate(timestampMs) {
-        if (!timestampMs) return '—';
-        const date = new Date(timestampMs);
-        let hours = date.getHours();
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const ampm = hours >= 12 ? 'م' : 'ص';
-        hours = hours % 12; if (hours === 0) hours = 12;
-        return `${hours}:${minutes} ${ampm} - ${date.getDate()}/${date.getMonth()+1}`;
-    }
-
-    function showCustomModal(message) { 
-        const modal = document.getElementById('customMessageModal'); 
-        document.getElementById('customMessageText').innerText = message; 
-        modal.classList.add('active'); 
-        setTimeout(() => modal.classList.remove('active'), 2000); 
-    }
-
-    function showToast(message, isError=false) { 
-        const toast = document.getElementById('toast-physics'); 
-        if (!toast) return; 
-        toast.textContent = message; 
-        toast.classList.remove('show','error'); 
-        if (isError) toast.classList.add('error'); 
-        void toast.offsetWidth; 
-        toast.classList.add('show'); 
-        clearTimeout(toast._timeout); 
-        toast._timeout = setTimeout(() => { toast.classList.remove('show'); }, 2400); 
-    }
-
-    // ---------- Audio ----------
+    // ========== الصوتيات ==========
     let audioContext = null;
     function initAudio() { if (!audioContext) { try { audioContext = new (window.AudioContext||window.webkitAudioContext)(); } catch(e) { return false; } } if (audioContext && audioContext.state==='suspended') audioContext.resume(); return true; }
     function playSound(type) { try { if(!initAudio()) return; let freq=800,dur=0.12,vol=0.1; if(type==='click'){freq=880;dur=0.08;vol=0.08;}else if(type==='select'){freq=660;dur=0.2;vol=0.12;}else if(type==='complete'){freq=1200;dur=0.15;vol=0.1;}else if(type==='success'){ const osc2=audioContext.createOscillator(); const gain2=audioContext.createGain(); osc2.connect(gain2); gain2.connect(audioContext.destination); osc2.frequency.value=1100; gain2.gain.value=vol; osc2.type='sine'; osc2.start(); gain2.gain.exponentialRampToValueAtTime(0.0001,audioContext.currentTime+dur); osc2.stop(audioContext.currentTime+dur); return; } const osc=audioContext.createOscillator(); const gain=audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.frequency.value=freq; gain.gain.value=vol; osc.type='sine'; osc.start(); gain.gain.exponentialRampToValueAtTime(0.0001,audioContext.currentTime+dur); osc.stop(audioContext.currentTime+dur); } catch(e){} }
     function playBeep() { try { if(!audioContext){ try{ audioContext=new (AudioContext||webkitAudioContext)(); }catch(e){return;} } const osc=audioContext.createOscillator(); const gain=audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.frequency.value=880; gain.gain.value=0.15; osc.type='sine'; osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001,audioContext.currentTime+0.3); osc.stop(audioContext.currentTime+0.3); if(audioContext.state==='suspended') audioContext.resume(); } catch(e){} }
-    function refreshSounds() { setTimeout(()=>{ document.querySelectorAll('button, .btn, .btn-icon, .detail-btn, .add-subtask-btn, .gender-option, #confirmSaveSchedule, #editScheduleBtnTeacher, #studentsListBtn, .filter-btn, .plan-carousel-btn, .plan-grid-btn').forEach(btn=>{ if(btn.hasSound) return; btn.hasSound=true; btn.addEventListener('click',(e)=>{ e.stopPropagation(); playSound('click'); }); }); },50); }
+    function refreshSounds() { setTimeout(()=>{ document.querySelectorAll('button, .btn, .btn-icon, .detail-btn, .add-subtask-btn, .gender-option, #confirmSaveSchedule, #editScheduleBtnTeacher, #studentsListBtn, .filter-btn').forEach(btn=>{ if(btn.hasSound) return; btn.hasSound=true; btn.addEventListener('click',(e)=>{ e.stopPropagation(); playSound('click'); }); }); },50); }
 
-    // ---------- Particles ----------
-    const canvas = document.getElementById('particles-canvas'); 
-    const ctx = canvas.getContext('2d'); 
-    let particles = [];
+    function showCustomModal(message) { const modal=document.getElementById('customMessageModal'); document.getElementById('customMessageText').innerText=message; modal.classList.add('active'); setTimeout(()=>modal.classList.remove('active'),2000); }
+    function showToast(message, isError=false) { const toast=document.getElementById('toast-physics'); if(!toast) return; toast.textContent=message; toast.classList.remove('show','error'); if(isError) toast.classList.add('error'); void toast.offsetWidth; toast.classList.add('show'); clearTimeout(toast._timeout); toast._timeout=setTimeout(()=>{ toast.classList.remove('show'); },2400); }
+
+    // ========== جسيمات الخلفية ==========
+    const canvas = document.getElementById('particles-canvas'); const ctx = canvas.getContext('2d'); let particles = [];
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     function createParticles() { particles = []; for(let i=0;i<70;i++) particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, radius:Math.random()*4+2, speedX:(Math.random()-0.5)*0.5, speedY:(Math.random()-0.5)*0.3, color:`rgba(60,120,70,${Math.random()*0.3+0.1})` }); }
     function drawParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); for(let p of particles){ ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill(); p.x+=p.speedX; p.y+=p.speedY; if(p.x<0) p.x=canvas.width; if(p.x>canvas.width) p.x=0; if(p.y<0) p.y=canvas.height; if(p.y>canvas.height) p.y=0; } requestAnimationFrame(drawParticles); }
     resizeCanvas(); createParticles(); drawParticles(); window.addEventListener('resize',()=>{ resizeCanvas(); createParticles(); });
 
-    // ---------- Modals ----------
     function addModals() {
         const modalHTML = `
-            <div id="taskStatsModal" class="modal"><div class="modal-content"><h3 id="taskStatTitle" style="color:#1f5437;"></h3><div class="filter-buttons"><button id="filterAllModal" class="filter-btn active">الكل</button><button id="filterMaleModal" class="filter-btn">🧑 ذكور</button><button id="filterFemaleModal" class="filter-btn">👩 إناث</button></div><div id="studentsCompletedListModal"></div><button class="btn" id="closeStatsModal" style="margin-top:15px;">إغلاق</button></div></div>
+            <div id="taskStatsModal" class="modal"><div class="modal-content"><h3 id="taskStatTitle" style="color:#1f5437;"></h3><div class="filter-buttons"><button id="filterAllModal" class="filter-btn active">الكل</button><button id="filterMaleModal" class="filter-btn">♂ ذكور</button><button id="filterFemaleModal" class="filter-btn">♀ إناث</button></div><div id="studentsCompletedListModal"></div><button class="btn" id="closeStatsModal" style="margin-top:15px;">إغلاق</button></div></div>
             <div id="studentTasksModal" class="modal"><div class="modal-content"><h3 id="studentTasksTitle" style="color:#1f5437;"></h3><div id="studentTasksList" style="margin:15px 0;"></div><button class="btn" id="closeStudentTasksModal">إغلاق</button></div></div>
-            <div id="allStudentsModal" class="modal"><div class="modal-content"><h3 style="color:#1f5437;">👨‍🎓 قائمة الطلاب</h3><div class="filter-buttons"><button id="filterAll" class="filter-btn active">الكل</button><button id="filterMale" class="filter-btn">🧑 ذكور</button><button id="filterFemale" class="filter-btn">👩 إناث</button></div><div id="allStudentsList"></div><button class="btn" id="closeAllStudentsModal" style="margin-top:15px;">إغلاق</button></div></div>
-            <div id="editScheduleModal" class="modal"><div class="modal-content" style="max-width:900px;"><h3 style="color:#1f5437;">✏️ تعديل الخطة: <span id="editPlanName"></span></h3><div id="editScheduleFields"></div></div></div>
+            <div id="allStudentsModal" class="modal"><div class="modal-content"><h3 style="color:#1f5437;">قائمة الطلاب</h3><div class="filter-buttons"><button id="filterAll" class="filter-btn active">الكل</button><button id="filterMale" class="filter-btn">♂ ذكور</button><button id="filterFemale" class="filter-btn">♀ إناث</button></div><div id="allStudentsList"></div><button class="btn" id="closeAllStudentsModal" style="margin-top:15px;">إغلاق</button></div></div>
+            <div id="editScheduleModal" class="modal"><div class="modal-content" style="max-width:900px;"><h3 style="color:#1f5437;">✏️ تعديل الخطة الدراسية</h3><div id="editScheduleFields"></div></div></div>
             <div id="customMessageModal" class="modal"><div class="modal-content" style="text-align:center; max-width:350px;"><i class="fas fa-check-circle" style="font-size:3rem; color:#2c6e3c;"></i><p id="customMessageText" style="margin-top:10px;"></p></div></div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         document.getElementById('closeStatsModal')?.addEventListener('click', () => document.getElementById('taskStatsModal').classList.remove('active'));
         document.getElementById('closeStudentTasksModal')?.addEventListener('click', () => document.getElementById('studentTasksModal').classList.remove('active'));
         document.getElementById('closeAllStudentsModal')?.addEventListener('click', () => document.getElementById('allStudentsModal').classList.remove('active'));
-        // Close modals on background click
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                    modal.style.visibility = 'hidden';
-                    modal.style.opacity = '0';
-                }
-            });
-        });
     }
-    addModals();
 
-    // ---------- Init App ----------
+    // ========== التهيئة ==========
     async function initApp() {
         document.getElementById('appContainer').innerHTML = `
             <div style="text-align:center; padding:3rem; background:#fff; border-radius:2rem; margin:2rem; box-shadow:0 10px 25px rgba(0,0,0,0.05);">
                 <i class="fas fa-spinner fa-pulse" style="font-size:3rem; color:#2c6e3c;"></i>
-                <p style="margin-top:1rem; font-weight:bold; color:#1f5437;">جاري تحميل الخطط...</p>
+                <p style="margin-top:1rem; font-weight:bold; color:#1f5437;">جاري تحميل بياناتك...</p>
+                <p style="font-size:0.8rem; color:#888; margin-top:0.5rem;">يرجى الانتظار قليلاً، هذا قد يستغرق بضع ثوانٍ</p>
+                <p style="font-size:0.75rem; color:#aaa; margin-top:1rem;">✅ تأكد من اتصالك بالإنترنت</p>
             </div>
         `;
-
         try {
-            await loadAllPlans();
-        } catch(e) {
-            console.error("Error loading plans", e);
+            await Promise.race([
+                Promise.all([ loadScheduleFromFirebase('physics'), loadScheduleFromFirebase('science'), loadScheduleFromFirebase('islamic') ]),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000))
+            ]);
+        } catch(err) {
+            console.error("Firebase error", err);
             document.getElementById('appContainer').innerHTML = `
-                <div style="text-align:center; padding:2rem; background:white; border-radius:2rem; margin:2rem; border-right:5px solid #c0392b;">
+                <div style="text-align:center; padding:2rem; background:white; border-radius:2rem; margin:2rem; border-right:5px solid #c0392b; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
                     <i class="fas fa-exclamation-triangle" style="font-size:4rem; color:#c0392b;"></i>
-                    <h2 style="color:#c0392b;">فشل تحميل البيانات</h2>
-                    <p>يرجى التحقق من اتصالك بالإنترنت أو تحديث الصفحة.</p>
-                    <button onclick="location.reload()" class="btn" style="margin-top:1rem;">إعادة المحاولة</button>
+                    <h2 style="color:#c0392b; margin:0.5rem 0;">تعذر الاتصال بخوادم التطبيق</h2>
+                    <p style="margin:1rem 0; color:#555;">الأسباب المحتملة:</p>
+                    <ul style="text-align:right; display:inline-block; margin-bottom:1.5rem; color:#444;">
+                        <li>🌐 الإنترنت ضعيف أو مقطوع</li>
+                        <li>🚫 خدمات Google (Firebase) محظورة في بلدك</li>
+                        <li>📱 المتصفح المدمج في واتساب أو فيسبوك غير متوافق</li>
+                    </ul>
+                    <p><strong>✅ الحلول:</strong></p>
+                    <ul style="text-align:right; margin-bottom:1.5rem; color:#444;">
+                        <li>📱 استخدم <strong>Google Chrome</strong> أو <strong>Safari</strong> (وليس من داخل واتساب)</li>
+                        <li>🌐 قم بتشغيل <strong>VPN</strong> إذا كنت في منطقة محظورة</li>
+                        <li>🔄 جرب <strong>إعادة تحميل الصفحة</strong> (Refresh)</li>
+                    </ul>
+                    <button onclick="location.reload()" class="btn" style="background:#2c6e3c; padding:0.6rem 1.8rem; font-size:1rem;">🔄 إعادة المحاولة</button>
                 </div>
             `;
             return;
         }
-
         const urlParams = new URLSearchParams(window.location.search);
         const isTeacherRequest = urlParams.get('teacher') === 'true';
-
         if (isTeacherRequest) {
             isTeacherMode = true;
             adminAuthenticated = true;
-            // اختيار أول خطة افتراضية إن لم تكن محددة
-            const planIds = Object.keys(allPlans);
-            if (planIds.length > 0 && !currentPlanId) {
-                await loadPlan(planIds[0]);
-            } else if (planIds.length === 0) {
-                // لا توجد خطط، نعرض رسالة
-                document.getElementById('appContainer').innerHTML = `
-                    <div class="hero-area"><div class="logo-title"><h1>📚 لوحة المشرف</h1></div><div class="admin-buttons"><button id="addPlanBtnTeacher" class="btn-icon" style="background:#4caf50; color:white;"><i class="fas fa-plus"></i> إضافة خطة</button></div></div>
-                    <div style="text-align:center; padding:4rem;"><i class="fas fa-folder-open" style="font-size:4rem; color:#aaa;"></i><p style="margin-top:1rem;">لا توجد خطط حالياً. أضف خطة جديدة!</p></div>
-                    <div class="footer-quote">💡 أضف خطة لتبدأ</div>
-                    <div class="developer-credit" onclick="window.open('https://wa.me/17862927607', '_blank');"><i class="fab fa-whatsapp"></i> المطور: حسام الحسين</div>
-                `;
-                document.getElementById('addPlanBtnTeacher').onclick = openAddPlanWizard;
-                return;
-            }
-
-            // بناء واجهة المشرف
             document.getElementById('appContainer').innerHTML = `
-                <div class="hero-area">
-                    <div class="logo-title"><h1><i class="fas fa-chalkboard-user"></i> لوحة المشرف - <span id="planNameDisplayTeacher">${currentPlan?.name || ''}</span></h1></div>
-                    <div class="admin-buttons">
-                        <div id="planGridTeacher" class="plan-grid-teacher"></div>
-                        <button id="studentsListBtn" class="btn-icon"><i class="fas fa-users"></i> الطلاب</button>
-                        <button id="editScheduleBtnTeacher" class="btn-icon"><i class="fas fa-edit"></i> تعديل</button>
-                        <button id="addPlanBtnTeacher" class="btn-icon" style="background:#4caf50; color:white;"><i class="fas fa-plus"></i> إضافة خطة</button>
-                    </div>
-                </div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> 👨‍🏫 يمكنك متابعة تقدم الطلاب وإدارة الخطط الدراسية.</div>
+                <div class="hero-area"><div class="logo-title"><h1><i class="fas fa-chalkboard-user"></i> لوحة تحكم المشرف - فيزياء 2026</h1></div><div class="admin-buttons"><button id="studentsListBtn" class="btn-icon"><i class="fas fa-users"></i> الطلاب</button><button id="editScheduleBtnTeacher" class="btn-icon"><i class="fas fa-edit"></i> تعديل الخطة</button></div></div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> اضغط على الكسر لعرض التفاصيل. النسبة المئوية في قائمة الطلاب تعتمد على عدد الساعات (للعلوم والاسلامية) أو عدد المهام (للفيزياء).</div>
                 <div class="today-highlight" id="todaySpotlight"><div style="font-weight:800;"><i class="fas fa-calendar-day"></i> مهام اليوم</div><div id="todayTasksList"></div></div>
                 <div id="allDaysContainer"></div>
-                <div class="motivational-board">📊 إدارة فعّالة لتحقيق أفضل النتائج</div>
-                <div class="footer-quote">💪 القيادة الجيدة تبدأ بالتخطيط الجيد</div>
-                <div class="developer-credit" onclick="window.open('https://wa.me/17862927607', '_blank');"><i class="fab fa-whatsapp"></i> المطور: حسام الحسين</div>
+                <div class="motivational-board">✨ متابعة تقدم الطلاب بشكل لحظي ✨</div>
+                <div class="footer-quote">🌟 طريق النجاح يبدأ بخطوة منظمة 🌟</div>
+                <div class="developer-credit" onclick="window.open('https://wa.me/17862927607', '_blank');"><i class="fab fa-whatsapp"></i> المطور: حسن المحمد</div>
             `;
-            renderPlanSelectors();
+            currentSubject = 'physics';
+            currentSchedule = scheduleDataPhysics;
+            rebuildSubtaskIds();
             await renderTeacherView();
             document.getElementById('editScheduleBtnTeacher').addEventListener('click', openEditSchedule);
             document.getElementById('studentsListBtn').addEventListener('click', showAllStudentsDialog);
-            document.getElementById('addPlanBtnTeacher').addEventListener('click', openAddPlanWizard);
-
         } else {
-            // وضع الطالب
             const storedId = safeLocalStorageGet('studentId');
             if (storedId) {
                 await loadStudentData(storedId);
-                if (currentStudent) {
-                    // اختيار أول خطة افتراضية
-                    const planIds = Object.keys(allPlans);
-                    if (planIds.length > 0 && !currentPlanId) {
-                        await loadPlan(planIds[0]);
-                    } else if (planIds.length === 0) {
-                        document.getElementById('appContainer').innerHTML = `<div style="text-align:center; padding:3rem;"><i class="fas fa-exclamation-circle" style="font-size:4rem; color:#f5b042;"></i><p>لا توجد خطط دراسية متاحة حالياً. يرجى مراجعة المشرف.</p></div>`;
-                        return;
-                    }
-                    buildStudentUI();
-                    renderStudentView();
-                    return;
-                }
+                if (currentStudent) { showSubjectSelectionScreen(); return; }
             }
-
-            // شاشة تسجيل الدخول
             const overlay = document.createElement('div'); overlay.className='student-login-overlay';
-            overlay.innerHTML = `<div class="student-login-card"><i class="fas fa-user-graduate"></i><h2>مرحباً! سجل دخولك</h2><input type="text" id="studentFullName" placeholder="الاسم الثلاثي"><div style="margin:10px 0;"><label>الجنس:</label><div class="gender-select"><div class="gender-option" data-gender="ذكر">🧑 ذكر</div><div class="gender-option" data-gender="أنثى">👩 أنثى</div></div><input type="hidden" id="studentGender" value="ذكر"></div><div class="error-message" id="nameError">يرجى إدخال الاسم الثلاثي</div><button id="submitStudentData">دخول</button></div>`;
+            overlay.innerHTML = `<div class="student-login-card"><i class="fas fa-user-graduate"></i><h2>مرحباً! أدخل بياناتك</h2><input type="text" id="studentFullName" placeholder="اسـمك الثنائي"><div style="margin:10px 0;"><label>الجنس:</label><div class="gender-select"><div class="gender-option" data-gender="ذكر">♂ ذكر</div><div class="gender-option" data-gender="أنثى">♀ أنثى</div></div><input type="hidden" id="studentGender" value="ذكر"></div><div class="error-message" id="nameError">⚠️ يجب إدخال الاسم الثنائي</div><button id="submitStudentData">متابعة</button></div>`;
             document.body.appendChild(overlay);
             const genderOptions = overlay.querySelectorAll('.gender-option');
             const genderInput = document.getElementById('studentGender');
@@ -1314,22 +1119,36 @@
             document.getElementById('submitStudentData').addEventListener('click', async () => {
                 const btn = document.getElementById('submitStudentData');
                 if(btn.disabled) return;
-                btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-pulse"></i> جاري...';
+                btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-pulse"></i> جاري التسجيل...';
                 const name = document.getElementById('studentFullName').value.trim();
                 const gender = document.getElementById('studentGender').value;
-                if(name.split(/\s+/).length<2) { showToast('الرجاء إدخال الاسم الثلاثي كاملاً', true); btn.disabled=false; btn.innerHTML='دخول'; return; }
+                if(name.split(/\s+/).length<2) { showToast('⚠️ يجب إدخال الاسم الثنائي', true); btn.disabled=false; btn.innerHTML='بدء المتابعة'; return; }
                 try {
                     await registerStudent(name, gender);
                     overlay.remove();
-                    const planIds = Object.keys(allPlans);
-                    if (planIds.length > 0) await loadPlan(planIds[0]);
-                    buildStudentUI();
-                    renderStudentView();
-                } catch(error) { showToast('حدث خطأ في التسجيل', true); btn.disabled=false; btn.innerHTML='دخول'; }
+                    showSubjectSelectionScreen();
+                } catch(error) { showToast('⚠️ خطأ، حاول مرة أخرى', true); btn.disabled=false; btn.innerHTML='بدء المتابعة'; }
             });
         }
     }
-
+    function showSubjectSelectionScreen() {
+        currentSchedule=[]; allSubTasks=[];
+        document.getElementById('appContainer').innerHTML = `
+            <div class="hero-area" style="justify-content:center;"><div class="logo-title"><h1><i class="fas fa-graduation-cap"></i> اختر خطتك الدراسية</h1></div></div>
+            <div style="display:flex; flex-wrap:wrap; gap:2rem; justify-content:center; margin:3rem 1rem;">
+                <div class="subject-card" data-subject="physics" style="background:linear-gradient(145deg, #1b5e2a, #0b3b1a); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-atom" style="font-size:4rem;"></i><h2>الفيزياء</h2><p>خطة مكثفة 10 أيام</p></div>
+                <div class="subject-card" data-subject="science" style="background:linear-gradient(145deg, #b85c1a, #7e3a0b); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-dna" style="font-size:4rem;"></i><h2>العلوم</h2><p>خطة مكثفة مع المدد الزمنية</p></div>
+                <div class="subject-card" data-subject="islamic" style="background:linear-gradient(145deg, #2c6e3c, #1a4028); border-radius:2rem; padding:2rem; width:260px; text-align:center; cursor:pointer; color:white;"><i class="fas fa-mosque" style="font-size:4rem;"></i><h2>الاسلامية</h2><p>خطة 5 أيام (مهامك أنت)</p></div>
+            </div>
+        `;
+        document.querySelectorAll('.subject-card').forEach(card=>{
+            card.addEventListener('click', async ()=>{
+                playSound('select');
+                const subject = card.dataset.subject;
+                await initializeStudentWithSubject(subject);
+            });
+        });
+    }
     function createParticlesOnGender(e, element) {
         const rect = element.getBoundingClientRect();
         const centerX = rect.left+rect.width/2; const centerY = rect.top+rect.height/2;
@@ -1345,8 +1164,24 @@
             setTimeout(()=>particle.remove(),600);
         }
     }
-
-    // بدء التشغيل
+    addModals();
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                modal.style.visibility = 'hidden';
+                modal.style.opacity = '0';
+            }
+        });
+    });
+    document.getElementById('closeStudentTasksModal')?.addEventListener('click', function() {
+        const modal = document.getElementById('studentTasksModal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+        }
+    });
     initApp();
     document.body.addEventListener('click', function once() { initAudio(); document.body.removeEventListener('click', once); }, { once: true });
 </script>
